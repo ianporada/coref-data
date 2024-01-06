@@ -1,3 +1,6 @@
+---
+license: cc-by-nc-sa-4.0
+---
 
 # Korean Effective Crowdsourcing of Multiple Tasks (ECMT) for Comprehensive Knowledge Extraction
 

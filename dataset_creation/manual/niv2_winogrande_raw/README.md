@@ -1,27 +1,4 @@
 ---
-dataset_info:
-  features:
-  - name: inputs
-    dtype: string
-  - name: targets
-    dtype: string
-  - name: task_source
-    dtype: string
-  - name: task_name
-    dtype: string
-  - name: template_type
-    dtype: string
-  splits:
-  - name: train
-    num_bytes: 125089431.24501853
-    num_examples: 96096
-  download_size: 37772259
-  dataset_size: 125089431.24501853
-configs:
-- config_name: default
-  data_files:
-  - split: train
-    path: data/train-*
 license: apache-2.0
 ---
 
