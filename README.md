@@ -1,81 +1,17 @@
 # coref-data
-A collection of coreference annotations in a standardized format.
+A collection of coreference annotations.
 
-## Entity
+## Overview
 
-<details>
-<summary>OntoNotes</summary>
-Summary: 
+The purpose of this project is to make coreference annotations more easily usable for research purposes.
 
-    @article{marcus2011ontonotes,
-        title="{O}nto{N}otes: A large training corpus for enhanced processing",
-        author={Weischedel, Ralph and
-            Hovy, Eduard and
-            Marcus, Mitchell and
-            Palmer, Martha and 
-            Belvin, Robert and
-            Pradhan, Sameer and
-            Ramshaw, Lance and 
-            Xue, Nianwen},
-        editor={Olive, Joseph and
-            Christianson, Caitlin and
-            McCary, John
-        },
-        journal={Handbook of Natural Language Processing and Machine Translation: DARPA Global Autonomous Language Exploitation.},
-        year={2011},
-        publisher = "Springer"
-    }
+## Dataset creation
 
-<details>
-<summary>conll_2012</summary>
-Summary:
+Some datasets (those in `dataset_creation/automatic`) were created using HuggingFace dataset creation scripts. This can be reproduced by running the following scripts to create the datasets and convert them to parquet format. (In order to enable the dataset viewer, the datasets needed to be converted to a format such as parquet.)
 
-    @inproceedings{pradhan-etal-2012-conll,
-        title = "{C}o{NLL}-2012 Shared Task: Modeling Multilingual Unrestricted Coreference in {O}nto{N}otes",
-        author = "Pradhan, Sameer  and
-        Moschitti, Alessandro  and
-        Xue, Nianwen  and
-        Uryupina, Olga  and
-        Zhang, Yuchen",
-        booktitle = "Joint Conference on {EMNLP} and {C}o{NLL} - Shared Task",
-        month = jul,
-        year = "2012",
-        address = "Jeju Island, Korea",
-        publisher = "Association for Computational Linguistics",
-        url = "https://aclanthology.org/W12-4501",
-        pages = "1--40",
-    }
+```
+python dataset_creation/generate_datasets.py
+python dataset_creation/convert_datasets_to_parquet.py
+```
 
-
-</details>
-
-</details>
-
-
-
-<!-- <details>
-<summary>ontogum</summary>
-Text
-</details>
-
-<details>
-<summary>preco</summary>
-Text
-</details>
-
-<details>
-<summary>gap</summary>
-Text
-</details> 
-
-## Winograd
-
-<details>
-<summary>dpr</summary>
-Text
-</details>
-
-<details>
-<summary>winogrande</summary>
-Text
-</details> -->
+All other datasets (those in `dataset_creation/manual`) were created by parsing and uploading the original dataset stored at `hf.co:coref-data/all_raw_datasets` (private repository). Running the above scripts will only update the README.md file for such datasets.

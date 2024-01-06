@@ -18,8 +18,10 @@ Backlog:
 1. pride and prejudice https://aclanthology.org/L16-1028.pdf
 1. Korean: Effective Crowdsourcing of Multiple Tasks for Comprehensive Knowledge
 Extraction
+    1. https://github.com/machinereading/CR/tree/master/input
 1. cross dataset, cross domain https://arxiv.org/abs/2101.12637
 1. QuizBowl and Wikicoref
+1. CRAFT
 
 See also:
 - https://jkk.name/reading-notes/coreference/
