@@ -2,6 +2,13 @@
 license: unknown
 ---
 
+# The PreCo Dataset
+
+- Project: https://preschool-lab.github.io/PreCo/
+- Data source: https://drive.google.com/file/d/1q0oMt1Ynitsww9GkuhuwNZNq6SjByu-Y/view?usp=sharing
+
+## Details
+
 The original PreCo `.jsonl` files from https://preschool-lab.github.io/PreCo/
 
 ## What is PreCo?
@@ -9,13 +16,14 @@ PreCo is a large-scale English dataset for coreference resolution. The dataset i
 
 The dataset is available for research purposes.
 
-## Data Format
+###  Data Format
 There are 2 JSON line files in the downloaded data, for training and development sets. We are still in the process of deciding how to use the test set, e.g., to publish it as is, or to hold an online competition. In the files, each line is a JSON string that encodes a document. The JSON object has the following fields:
 
 "id": a string identifier of the document.
 "sentences": the text. It is a list of sentences. Each sentence is a list of tokens. Each token is a string, which can be a word or a punctuation mark. A sentence that contains only one token of space is used to separate paragraphs in the text.
 "mention_clusters": the mention clusters of the document. It is a list of mention clusters. Each mention cluster is a list of mentions. Each mention is a tuple of integers [sentence_idx, begin_idx, end_idx]. Sentence_idx is the index of the sentence of the mention. Begin_idx is the index of the first token of the mention in the sentence. End_index is the index of the last token of the mention in the sentence plus one. All indices are zero-based.
 
+## Citation
 ```
 @inproceedings{chen-etal-2018-preco,
     title = "{P}re{C}o: A Large-scale Dataset in Preschool Vocabulary for Coreference Resolution",

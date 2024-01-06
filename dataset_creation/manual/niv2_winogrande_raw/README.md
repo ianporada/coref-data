@@ -27,23 +27,26 @@ license: apache-2.0
 
 # Natural Instructions v2 Winogrande Tasks
 
+- Project: https://github.com/allenai/natural-instructions
+- Data source: [DataProvenanceInitiative/niv2_submix_original](https://huggingface.co/datasets/DataProvenanceInitiative/niv2_submix_original)
+
+## Details
+
 This dataset contains all Winogrande examples that were included in the [Flan 2022 collection](https://github.com/google-research/FLAN/tree/main/flan/v2) which were orignally published in Super-Natural-Instructions.
 
 The data is copied from the preprocessed Natural Instructions v2 dataset at [DataProvenanceInitiative/niv2_submix_original](https://huggingface.co/datasets/DataProvenanceInitiative/niv2_submix_original).
 
 These tasks are:
-1. 'task029_winogrande_full_object', # Creating a pair of fill in the blank question-answer pairs on objects.	
-2. 'task030_winogrande_full_person', # Creating a pair of fill in the blank questions on persons.	
-3. 'task031_winogrande_question_generation_object', # Writing a fill in the blank question on objects.	
-4. 'task032_winogrande_question_generation_person', # Writing a fill in the blank question on persons.	
-5. 'task033_winogrande_answer_generation', # Answering a fill in the blank question on objects.	
-6. 'task034_winogrande_question_modification_object', # Modifying a fill in the blank question on objects.	
-7. 'task035_winogrande_question_modification_person', # Modifying a fill in the blank question on persons.	
-8. 'task1391_winogrande_easy_answer_generation', # Answering a fill in the blank question on objects.
+1. 'task029_winogrande_full_object': Creating a pair of fill in the blank question-answer pairs on objects.	
+2. 'task030_winogrande_full_person': Creating a pair of fill in the blank questions on persons.	
+3. 'task031_winogrande_question_generation_object': Writing a fill in the blank question on objects.	
+4. 'task032_winogrande_question_generation_person': Writing a fill in the blank question on persons.	
+5. 'task033_winogrande_answer_generation': Answering a fill in the blank question on objects.	
+6. 'task034_winogrande_question_modification_object': Modifying a fill in the blank question on objects.	
+7. 'task035_winogrande_question_modification_person': Modifying a fill in the blank question on persons.	
+8. 'task1391_winogrande_easy_answer_generation': Answering a fill in the blank question on objects.
 
-### Data Fields
-
-The data fields are the same among all splits.
+### Fields
 
 - `inputs`: a `string` feature.
 - `targets`: a `string` feature.
@@ -51,6 +54,7 @@ The data fields are the same among all splits.
 - `task_name`: a `string` feature.
 - `template_type`: a `string` feature.
 
+## Citation
 ```
 @inproceedings{wang-etal-2022-super,
     title = "Super-{N}atural{I}nstructions: Generalization via Declarative Instructions on 1600+ {NLP} Tasks",

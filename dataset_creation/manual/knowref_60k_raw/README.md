@@ -4,8 +4,8 @@ license: cc-by-4.0
 
 # The Knowref 60K Dataset
 
-The second version of the Knowref dataset.
-From: https://github.com/aemami1/KnowRef60k
+- Project: https://github.com/aemami1/KnowRef60k
+- Data source: https://github.com/aemami1/KnowRef60k/tree/28e5385d17967744ccb3bdba45fdd89d9690307d
 
 ## Fields
 
@@ -16,8 +16,7 @@ From: https://github.com/aemami1/KnowRef60k
 - `swapped_sentence` (str): sentence after swapping the names with square brackets marking the pronoun
 - `correct_candidate` (str): either "candidate_0" or "candidate_1"
 
-
-Citation:
+## Citation 
 ```
 @inproceedings{emami-etal-2020-analysis,
     title = "An Analysis of Dataset Overlap on {W}inograd-Style Tasks",
