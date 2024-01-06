@@ -1,9 +1,12 @@
 
 # Korean Effective Crowdsourcing of Multiple Tasks (ECMT) for Comprehensive Knowledge Extraction
 
+- Project: https://github.com/machinereading/crowdsourcing
+- Data source: https://figshare.com/s/7367aeca244efae03068
+
 ## Details
 
-Annotated text from Korean Wikipedia and DBox (DBpedia).
+Annotated text from Korean Wikipedia and KBox (Korean DBpedia). Includes a crowd sourced training set and expert annotated (reviewed by four experts) test set.
 
 The dataset was annotated by crowdworks in multiple stages.
 * Phase I: entity mention detection annotation; candidate entity mentions are selected in a text

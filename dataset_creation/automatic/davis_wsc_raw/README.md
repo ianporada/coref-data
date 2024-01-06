@@ -87,6 +87,8 @@ dataset_info:
 
 ### Dataset Summary
 
+The original Winograd Schema Challenge (WSC) consisted of 136 schemas resulting in 273  problems. This was later expanded to 150 schemas resulting in 285 problems.
+
 A Winograd schema is a pair of sentences that differ in only one or two words and that contain an ambiguity that is
 resolved in opposite ways in the two sentences and requires the use of world knowledge and reasoning for its
 resolution. The schema takes its name from a well-known example by Terry Winograd:
@@ -148,4 +150,4 @@ The Winograd Schema Challenge including many of the examples here was proposed b
 ```
 ### Contributions
 
-Thanks to [@joeddav](https://github.com/joeddav) for adding this dataset.
+Modified from loading script of: [@joeddav](https://github.com/joeddav).
