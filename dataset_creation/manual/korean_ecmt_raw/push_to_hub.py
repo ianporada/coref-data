@@ -105,4 +105,4 @@ dataset = DatasetDict({
     "test": Dataset.from_list(read_formatted_docs_as_list(TEST_FNAME)),
 })
 
-dataset.push_to_hub("coref-data/korean_ecmt", private=True)
+dataset.push_to_hub("coref-data/korean_ecmt_raw", private=True)
