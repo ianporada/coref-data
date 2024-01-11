@@ -5,7 +5,7 @@ license: other
 # GUM Corpus
 
 - Project: https://github.com/amir-zeldes/gum
-- Data source: https://github.com/amir-zeldes/gum/commit/3b0ab7d11911be1695e4dacadb28a7a1df230bdb
+- Data source: https://github.com/amir-zeldes/gum/commit/3b0ab7d11911be1695e4dacadb28a7a1df230bdb (V9.2.0)
 
 ## Details
 
