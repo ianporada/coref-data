@@ -2,10 +2,10 @@
 license: other
 ---
 
-# GUM Corpus
+# GUM Corpus V9.2.0
 
 - Project: https://github.com/amir-zeldes/gum
-- Data source: https://github.com/amir-zeldes/gum/commit/3b0ab7d11911be1695e4dacadb28a7a1df230bdb (V9.2.0)
+- Data source: https://github.com/amir-zeldes/gum/commit/3b0ab7d11911be1695e4dacadb28a7a1df230bdb
 
 ## Details
 

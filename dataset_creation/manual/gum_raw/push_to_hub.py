@@ -16,11 +16,11 @@ from datasets import Dataset, DatasetDict
 from stanza.utils.conll import FIELD_TO_IDX, CoNLL
 from udapi.block.read.conllu import Conllu as ConlluReader
 
-GUM_CONLLU_DIR = "dep/"
-GUM_CONLL_DIR = "coref/gum/conll/"
+GUM_CONLLU_DIR = "gum/dep/"
+GUM_CONLL_DIR = "gum/coref/gum/conll/"
 
-ONTOGUM_CONLLU_DIR = "coref/ontogum/conllu/"
-ONTOGUM_CONLL_DIR = "coref/ontogum/conll/"
+ONTOGUM_CONLLU_DIR = "gum/coref/ontogum/conllu/"
+ONTOGUM_CONLL_DIR = "gum/coref/ontogum/conll/"
 
 CONLLU_TEXT_COL = FIELD_TO_IDX["text"]
 IDX_TO_FIELD = {v:k for k, v in FIELD_TO_IDX.items()}
@@ -148,7 +148,8 @@ def read_corefud_data(conllu_fname):
         # assert not node.is_empty(), f"GUM should not have empty nodes: {node} at {node.ord}"
         # nevermind GUM indeed has empty nodes
 
-        if node.ord == 1: # for the first node in the tree, create a new sentence
+        # for the first node in the tree, create a new sentence
+        if not sentences or node.root.sent_id != sentences[-1]["sent_id"]:
             root = node.root
             speaker = None
             match = re.search("^ speaker = (.+)", root.comment, re.M)
@@ -183,14 +184,24 @@ def read_corefud_data(conllu_fname):
             'lemma': node.lemma,
             'upos': node.upos,
             'xpos': node.xpos,
-            # 'feats': node.feats, # don't include feats because they are not always the same keys
+            'feats': str(node.feats),
             'head': node.parent.ord if node.parent else None,
             'deprel': node.deprel,
             'coref_mentions': coref_mentions,
         }
         sentences[-1]['tokens'].append(token)
 
-    return sentences
+    coref_entities = []
+    for entity in doc.coref_entities:
+        coref_mentions = []
+        for mention in entity.mentions:
+            coref_mentions.append({
+                "sent_id": mention.head.root.sent_id,
+                "span": mention.span,
+            })
+        coref_entities.append(coref_mentions)
+
+    return sentences, coref_entities
 
 
 # Parse the docs one by one
@@ -217,7 +228,7 @@ for conllu_fname in glob.glob(os.path.join(GUM_CONLLU_DIR, "*.conllu")):
         raise e
 
     # use udapi to read the corefud annotations from the conllu files
-    corefud_sentences = read_corefud_data(conllu_fname)
+    corefud_sentences, coref_entities = read_corefud_data(conllu_fname)
 
     # merge doc_dict with corefud_sentences
     merged_sentences = []
@@ -245,6 +256,7 @@ for conllu_fname in glob.glob(os.path.join(GUM_CONLLU_DIR, "*.conllu")):
     doc = {
         "doc_id": doc_id,
         "sentences": merged_sentences,
+        "coref_entities": coref_entities,
         "ontogum_sentences": ontogum_doc_dict,
         "ontogum_coref_chains": ontogum_coref_chains,
     }
