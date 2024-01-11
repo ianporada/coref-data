@@ -97,6 +97,14 @@ def read_ontogum_conll_file(fname):
                 continue
             row = line.split("\t")
             lines.append(row)
+
+    # hotfix unclosed span and missing token
+    basename = os.path.basename(fname)
+    if basename == "GUM_voyage_guadeloupe.conll":
+        lines[1][-1] = "(1)"
+    elif basename == "GUM_news_iodine.conll":
+        lines[379][1] = "|"
+
     return lines
 
 
@@ -118,7 +126,8 @@ def compute_ontogum_coref_chains(doc_dict, raw_ontogum_lines):
             global_token_idx += 1
             _, token, coref_info = raw_ontogum_row
 
-            assert row[CONLLU_TEXT_COL] == token, f"Mismatch {row[CONLLU_TEXT_COL]} and {token} at {row[0]}"
+            assert row[CONLLU_TEXT_COL] == token, \
+                f"Mismatch {row[CONLLU_TEXT_COL]} and {token} at global index: {global_token_idx}"
             row[-1] = coref_info
     ontogum_coref_chains = conll_transform.compute_chains(doc_as_list)
     return ontogum_doc_dict, ontogum_coref_chains
@@ -169,8 +178,14 @@ def read_corefud_data(conllu_fname):
             })
 
         token = {
-            'index': node.ord,
+            'ord': node.ord,
             'form': node.form,
+            'lemma': node.lemma,
+            'upos': node.upos,
+            'xpos': node.xpos,
+            # 'feats': node.feats, # don't include feats because they are not always the same keys
+            'head': node.parent.ord if node.parent else None,
+            'deprel': node.deprel,
             'coref_mentions': coref_mentions,
         }
         sentences[-1]['tokens'].append(token)
@@ -178,8 +193,7 @@ def read_corefud_data(conllu_fname):
     return sentences
 
 
-dev_ids = parse_list_of_split_ids(RAW_DEV_IDS)
-test_ids = parse_list_of_split_ids(RAW_TEST_IDS)
+# Parse the docs one by one
 
 docs = []
 for conllu_fname in glob.glob(os.path.join(GUM_CONLLU_DIR, "*.conllu")):
@@ -196,7 +210,11 @@ for conllu_fname in glob.glob(os.path.join(GUM_CONLLU_DIR, "*.conllu")):
 
     # read the ontogum annotations
     raw_ontogum_lines = read_ontogum_conll_file(ontogum_conll_fname)
-    ontogum_doc_dict, ontogum_coref_chains = compute_ontogum_coref_chains(doc_dict, raw_ontogum_lines)
+    try:
+        ontogum_doc_dict, ontogum_coref_chains = compute_ontogum_coref_chains(doc_dict, raw_ontogum_lines)
+    except Exception as e:
+        print(f"Error in doc: {doc_id}")
+        raise e
 
     # use udapi to read the corefud annotations from the conllu files
     corefud_sentences = read_corefud_data(conllu_fname)
@@ -206,11 +224,20 @@ for conllu_fname in glob.glob(os.path.join(GUM_CONLLU_DIR, "*.conllu")):
     for sent_idx, sent in enumerate(doc_dict):
         corefud_sent = corefud_sentences[sent_idx]
 
+        offset = 0
         for token_idx, token_dict in enumerate(sent):
             conllu_token = token_dict["text"]
-            corefud_token = corefud_sent["tokens"][token_idx]["form"]
-            assert conllu_token == corefud_token, \
-                f"Tokens do not match: {conllu_token} and {corefud_token} in {doc_id} at ({sent_idx}, {token_idx})" 
+
+            # make sure tokens align between what was read by stanza and udapi
+            corefud_row = corefud_sent["tokens"][token_idx + offset]
+            while not isinstance(corefud_row["ord"], int):
+                offset += 1
+                corefud_row = corefud_sent["tokens"][token_idx + offset]
+            corefud_token = corefud_row["form"]
+            if conllu_token != corefud_token:
+                print("Tokens do not match:" \
+                      f"{conllu_token} and {corefud_token} in {doc_id} at ({sent_idx}, {token_idx})")
+                 
 
         corefud_sent["conll_rows"] = sent
         merged_sentences.append(corefud_sent)
@@ -221,100 +248,20 @@ for conllu_fname in glob.glob(os.path.join(GUM_CONLLU_DIR, "*.conllu")):
         "ontogum_sentences": ontogum_doc_dict,
         "ontogum_coref_chains": ontogum_coref_chains,
     }
+    docs.append(doc)
 
 
-# # data files are available at this URL
-# DATA_URL = "https://github.com/machinereading/CR/blob/743f758e2b0c1fad6a06ce600b59ae882ab66c0e/input/"
+dev_ids = parse_list_of_split_ids(RAW_DEV_IDS)
+test_ids = parse_list_of_split_ids(RAW_TEST_IDS)
 
-# TRAIN_FNAME = "nonJosa_train1345.NER5.v4_gold_conll"
-# VALIDATION_FNAME = "nonJosa_dev.NER5.v4_gold_conll"
-# TEST_FNAME = "whole.korean8_pd_NER.v4_gold_conll"
+train_docs = [doc for doc in docs if doc["doc_id"] not in dev_ids + test_ids]
+validation_docs = [doc for doc in docs if doc["doc_id"] in dev_ids]
+test_docs = [doc for doc in docs if doc["doc_id"] in test_ids]
 
-# DOC_ID_PATTERN = r"#begin document \((.+)\); part \d+"
+dataset = DatasetDict({
+    "train": Dataset.from_list(train_docs),
+    "validation": Dataset.from_list(validation_docs),
+    "test": Dataset.from_list(test_docs),
+})
 
-# NER_dic = {'PERSON': 0, 'STUDY_FIELD' : 5, 'THEORY' : 5,
-#            'ARTIFACTS' : 5, 'ORGANIZATION' : 2, 'LOCATION' : 1,
-#            'CIVILIZATION' : 5, 'DATE' : 5, 'TIME': 4,
-#            'EVENT' : 3, 'ANIMAL' : 5, 'PLANT' : 5,
-#            'MATERIAL' : 5, 'TERM' : 5, 'JOB' : 5,
-#            'QUANTITY' : 5, 'ETC' : 5}
-
-# # These are all the columns that are used in the dataset
-# # Inferred from https://github.com/machinereading/CR/blob/743f758e2b0c1fad6a06ce600b59ae882ab66c0e/make_conll.py
-# TOK_IDX_COL = 2
-# LEMMA_COL = 3
-# POS_COL = 4
-# VERB_STEM_COL = 6
-# NER_TYPE_COL = 10
-# ZERO_ANAPHORA_INDEX_COL = 11
-# COREF_COL = 15
-
-
-# def read_raw_docs(fname):
-#     # map doc_id to list of sentences, each sentence is list of features
-#     docs = {}
-
-#     # parse all conll documents into a dict
-#     with open(fname, "r") as f:
-#         current_doc_id = None
-#         for line in f:
-#             line = line.rstrip()
-
-#             if line.startswith("#begin document"):
-#                 assert current_doc_id is None
-#                 full_doc_id = re.search(DOC_ID_PATTERN, line).group(1)
-#                 current_doc_id = os.path.basename(full_doc_id)
-#                 docs[current_doc_id] = []
-
-#             elif line.startswith("#end document"):
-#                 assert current_doc_id is not None
-#                 current_doc_id = None
-                
-#             elif line:
-#                 cols = line.split("\t")
-#                 token_idx = int(cols[TOK_IDX_COL])
-#                 if token_idx == 0:
-#                     docs[current_doc_id].append([])
-#                 docs[current_doc_id][-1].append(cols)
-
-#     return docs
-
-
-# def read_formatted_docs_as_list(fname):
-#     raw_docs = read_raw_docs(fname)
-#     docs = []
-#     for doc_id, raw_sentences in raw_docs.items():
-#         # Return a list of chains,
-#         #     * each being a list of mentions,
-#         #     * each being a tuple of (sent, start, end), inclusive
-#         chains = conll_transform.compute_chains(raw_sentences)
-
-#         clean_sentences = []
-#         for raw_sentence in raw_sentences:
-#             clean_sentence = {
-#                 "lemmas": [row[LEMMA_COL].rpartition('/')[0] for row in raw_sentence],
-#                 "pos_tags": [row[POS_COL] for row in raw_sentence],
-#                 "verb_stems": [row[VERB_STEM_COL] for row in raw_sentence],
-#                 "ner_types": [row[NER_TYPE_COL] for row in raw_sentence],
-#                 "zero_anaphora_indices": [row[ZERO_ANAPHORA_INDEX_COL] for row in raw_sentence],
-#                 "coref_info": [row[COREF_COL] for row in raw_sentence],
-#             }
-#             clean_sentences.append(clean_sentence)
-        
-#         doc = {
-#             "doc_id": doc_id,
-#             "sentences": clean_sentences,
-#             "coref_chains": chains,
-#         }
-#         docs.append(doc)
-
-#     return docs
-
-
-# dataset = DatasetDict({
-#     "train": Dataset.from_list(read_formatted_docs_as_list(TRAIN_FNAME)),
-#     "validation": Dataset.from_list(read_formatted_docs_as_list(VALIDATION_FNAME)),
-#     "test": Dataset.from_list(read_formatted_docs_as_list(TEST_FNAME)),
-# })
-
-# dataset.push_to_hub("coref-data/korean_ecmt", private=True)
+dataset.push_to_hub("coref-data/gum_raw", private=True)

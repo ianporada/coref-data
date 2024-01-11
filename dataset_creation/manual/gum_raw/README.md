@@ -33,3 +33,87 @@ An English corpus annotated for coreference and other linguistic phenomenon. See
   address   = {Bangkok, Thailand}
 }
 ```
+
+## Features
+
+```python
+{
+    "doc_id": Value(dtype="string", id=None),
+    "sentences": [
+        {
+            "comment": Value(dtype="string", id=None),
+            "conll_rows": [
+                {
+                    "deprel": Value(dtype="string", id=None),
+                    "deps": Value(dtype="string", id=None),
+                    "feats": Value(dtype="string", id=None),
+                    "head": Value(dtype="int64", id=None),
+                    "id": Value(dtype="int64", id=None),
+                    "lemma": Value(dtype="string", id=None),
+                    "misc": Value(dtype="string", id=None),
+                    "text": Value(dtype="string", id=None),
+                    "upos": Value(dtype="string", id=None),
+                    "xpos": Value(dtype="string", id=None),
+                }
+            ],
+            "global_entity": Value(dtype="string", id=None),
+            "newdoc": Value(dtype="string", id=None),
+            "newpar": Value(dtype="bool", id=None),
+            "sent_id": Value(dtype="string", id=None),
+            "speaker": Value(dtype="string", id=None),
+            "text": Value(dtype="string", id=None),
+            "tokens": [
+                {
+                    "coref_mentions": [
+                        {
+                            "eid": Value(dtype="string", id=None),
+                            "eid_or_grp": Value(dtype="string", id=None),
+                            "etype": Value(dtype="string", id=None),
+                            "other": {
+                                "centering": Value(dtype="string", id=None),
+                                "identity": Value(dtype="string", id=None),
+                                "infstat": Value(dtype="string", id=None),
+                                "link": Value(dtype="string", id=None),
+                                "minspan": Value(dtype="string", id=None),
+                            },
+                            "span": Value(dtype="string", id=None),
+                        }
+                    ],
+                    "deprel": Value(dtype="string", id=None),
+                    "form": Value(dtype="string", id=None),
+                    "head": Value(dtype="int64", id=None),
+                    "lemma": Value(dtype="string", id=None),
+                    "ord": Value(dtype="float64", id=None),
+                    "upos": Value(dtype="string", id=None),
+                    "xpos": Value(dtype="string", id=None),
+                }
+            ],
+        }
+    ],
+    "ontogum_sentences": [
+        [
+            {
+                "deprel": Value(dtype="string", id=None),
+                "deps": Value(dtype="string", id=None),
+                "feats": Value(dtype="string", id=None),
+                "head": Value(dtype="int64", id=None),
+                "id": Value(dtype="int64", id=None),
+                "lemma": Value(dtype="string", id=None),
+                "misc": Value(dtype="string", id=None),
+                "text": Value(dtype="string", id=None),
+                "upos": Value(dtype="string", id=None),
+                "xpos": Value(dtype="string", id=None),
+            }
+        ]
+    ],
+    "ontogum_coref_chains": Sequence(
+        feature=Sequence(
+            feature=Sequence(feature=Value(dtype="int64", id=None), length=-1, id=None),
+            length=-1,
+            id=None,
+        ),
+        length=-1,
+        id=None,
+    ),
+}
+```
