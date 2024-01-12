@@ -10,7 +10,9 @@ license: cc-by-4.0
 
 ## Details
 
-Each item has the features
+Ten configs of the form f"split_{X}" where X is in range(10)
+
+### Features
 
 ```
 {'coref_chains': List[List[List[int]]] # list of clusters, each cluster is a list of mentions, each mention is a list of [sent_idx, start, end] inclusive
