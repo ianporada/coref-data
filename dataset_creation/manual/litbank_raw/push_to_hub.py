@@ -9,11 +9,15 @@ import os
 from conll_coref_transform import conll_transform
 from datasets import Dataset, DatasetDict
 
-COREF_DIR = "coref/conll/" # .conll CoNLL-2012 Shared Task format
-ENTITY_DIR = "entities/tsv/" # .tsv [word, BIO, BIO, BIO, BIO] where BIO is TAG-TYPE e.g. B-PER
-EVENT_DIR = "events/tsv/" # .tsv [word, TAG] where TAG is O or EVENT
-TEXT_DIR = "original/" # .txt original text
-QUOTATIONS = "quotations/tsv/" # .tsv see https://github.com/dbamman/litbank/blob/master/quotations/README.md
+COREF_DIR = "litbank/coref/conll/" # .conll CoNLL-2012 Shared Task format
+ENTITY_DIR = "litbank/entities/tsv/" # .tsv [word, BIO, BIO, BIO, BIO] where BIO is TAG-TYPE e.g. B-PER
+EVENT_DIR = "litbank/events/tsv/" # .tsv [word, TAG] where TAG is O or EVENT
+TEXT_DIR = "litbank/original/" # .txt original text
+QUOTATIONS = "litbank/quotations/tsv/" # .tsv see https://github.com/dbamman/litbank/blob/master/quotations/README.md
+
+# generated using https://github.com/dbamman/lrec2020-coref/commit/e30de53743d36d1ea2c9e7292c69477fa332713c
+# `python scripts/create_crossval.py data/litbank_tenfold_splits data/original/conll/  data/litbank_tenfold_splits`
+CROSSVAL_SPLITS_DIR = "lrec2020-coref/data/litbank_tenfold_splits/"
 
 TOKEN_COLUMN = 3
 
@@ -122,55 +126,85 @@ META_INFO = """
 |1245|1919|Woolf, Virginia|Night and Day|
 """
 
+def create_id_to_meta_info():
+    id2meta = {}
+    for line in META_INFO.split("\n"):
+        if not line:
+            continue
+        gutenberg_id, date, author, title = line.strip('|').split('|')
+        if not gutenberg_id.isnumeric():
+            continue
+        id2meta[gutenberg_id] = {
+            "gutenberg_id": gutenberg_id,
+            "date": date,
+            "author": author,
+            "title": title,
+        }
+    return id2meta
+
 def read_tsv(fname):
     with open(fname) as f:
-        csv_reader = csv.reader(f, delimiter='\t')
+        csv_reader = csv.reader(f, delimiter='\t', quoting=csv.QUOTE_NONE)
         return [row for row in csv_reader]
 
 
-docs = []
+# Parse LitBank
+    
+id_to_meta_info = create_id_to_meta_info()
+
+doc_name_to_doc = {}
 for doc_fname in glob.glob(os.path.join(TEXT_DIR, "*.txt")):
     doc_name = os.path.basename(doc_fname).replace(".txt", "")
 
     # read conll data
-    conll_fname = os.path.join(COREF_DIR, doc_fname + '.conll')
+    conll_fname = os.path.join(COREF_DIR, doc_name + '_brat.conll')
     docs = conll_transform.read_file(conll_fname)
     assert len(docs.values()) == 1, f"{doc_fname} conll file should have only one doc"
-    sentences = docs.values()[0]
+    sentences = list(docs.values())[0]
     coref_chains = conll_transform.compute_chains(sentences)
     tokens = [[row[TOKEN_COLUMN] for row in s] for s in sentences]
 
     # read entity data
-    entity_fname = os.path.join(ENTITY_DIR, doc_fname + '.tsv')
+    entity_fname = os.path.join(ENTITY_DIR, doc_name + '_brat.tsv')
     entity_rows = read_tsv(entity_fname) # [word, BIO, BIO, BIO, BIO] where BIO is TAG-TYPE e.g. B-PER
-    entities = []
+    entities = [[]]
     for row in entity_rows:
+        if not row: # empty row means start of a new sentence
+            entities.append([])
+            continue
         token = row[0]
         bio_tags = row[1:]
-        entities.append({
+        entities[-1].append({
             "token": token,
             "bio_tags": bio_tags,
         })
+    if not entities[-1]:
+        entities.pop()
     
     # read event data
-    event_fname = os.path.join(EVENT_DIR, doc_fname + '.tsv')
+    event_fname = os.path.join(EVENT_DIR, doc_name + '_brat.tsv')
     event_rows = read_tsv(event_fname) # [word, TAG] where TAG is O or EVENT
-    events = []
+    events = [[]]
     for row in event_rows:
+        if not row: # empty row means start of a new sentence
+            events.append([])
+            continue
         token = row[0]
         is_event = row[1] == "EVENT"
-        events.append({
+        events[-1].append({
             "token": token,
             "is_event": is_event,
         })
+    if not events[-1]:
+        events.pop()
 
     # read text data
-    text_fname = os.path.join(TEXT_DIR, doc_fname + '.txt')
+    text_fname = os.path.join(TEXT_DIR, doc_name + '.txt')
     with open(doc_fname) as f:
         original_text = f.read()
 
     # read quotation data
-    quotation_fname = os.path.join(QUOTATIONS, doc_fname + '.tsv')
+    quotation_fname = os.path.join(QUOTATIONS, doc_name + '_brat.ann')
     quotation_rows = read_tsv(quotation_fname)
     quotes = {}
     attributions = {}
@@ -186,12 +220,17 @@ for doc_fname in glob.glob(os.path.join(TEXT_DIR, "*.txt")):
         elif row[0] == "ATTRIB":
             quote_id, speaker = row[1:]
             attributions[quote_id] = speaker
-    for quote_id, speaker in attributions:
+    for quote_id, speaker in attributions.items():
+        assert quote_id in quotes, f"Quote {quote_id} is attributed but not in {doc_name}"
         quotes[quote_id]["attribution"] = speaker
-    quotes = list(quotes.values)
+    quotes = list(quotes.values())
+
+    gutenberg_id = doc_name.split("_")[0]
+    assert gutenberg_id.isnumeric()
 
     doc = {
         "doc_name": doc_name,
+        "meta_info": id_to_meta_info[gutenberg_id],
         "sentences": tokens,
         "coref_chains": coref_chains,
         "entities": entities,
@@ -199,12 +238,26 @@ for doc_fname in glob.glob(os.path.join(TEXT_DIR, "*.txt")):
         "original_text": original_text,
         "quotes": quotes,
     }
+    doc_name_to_doc[doc_name] = doc
 
 
-# dataset = DatasetDict({
-#     "train": Dataset.from_list(train_docs),
-#     "validation": Dataset.from_list(validation_docs),
-#     "test": Dataset.from_list(test_docs),
-# })
+def read_id_file(dir, split):
+    fname = os.path.join(dir, split + ".ids")
+    with open(fname) as f:
+        return [x.replace("_brat.tsv", "") for x in f.read().splitlines()]
 
-# dataset.push_to_hub("coref-data/gum_raw", private=True)
+# upload each split
+for crossval_split in range(10):
+    split_dir = os.path.join(CROSSVAL_SPLITS_DIR, str(crossval_split))
+
+    train_docs = read_id_file(split_dir, "train")
+    dev_docs   = read_id_file(split_dir, "dev")
+    test_docs  = read_id_file(split_dir, "test")
+    
+    dataset = DatasetDict({
+        "train": Dataset.from_list([doc_name_to_doc[x] for x in train_docs]),
+        "validation": Dataset.from_list([doc_name_to_doc[x] for x in dev_docs]),
+        "test": Dataset.from_list([doc_name_to_doc[x] for x in test_docs]),
+    })
+
+    dataset.push_to_hub("coref-data/litbank_raw", f"split_{crossval_split}", private=True)
