@@ -28,6 +28,8 @@ For more detailed info of the dataset like annotation, tag set, etc., you can re
 
 V4 data for Arabic, Chinese, English, and V12 data for English
 
+Arabic has certain typos noted at https://github.com/juntaoy/aracoref/blob/main/preprocess_arabic.py
+
 ## Dataset Structure
 
 ### Data Instances
