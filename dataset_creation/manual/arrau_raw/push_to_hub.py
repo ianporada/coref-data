@@ -2,20 +2,18 @@
 Write the arrau 2.1 dataset to the HuggingFace Hub.
 
 Some MMAX code modified from https://github.com/pitrack/incremental-coref/blob/main/conversion_scripts/convert_arrau.py
+
+Does not read raw data since there is a mismatch in file names, although some of the original text documents
+could be recovered from the original dataset.
 """
 
-import csv
 import glob
 import os
 import xml.etree.ElementTree as ET
 
-from conll_coref_transform import conll_transform
 from datasets import Dataset, DatasetDict
 
-# Not currently read but could be recovered:
-# 11. other (possibly) "markables/{}_parse_level.xml" "markables/{}_unit_level.xml"
-
-DATASET_DIR = "arrau_v2_1/ARRAU2.1/"
+DATASETS_DIR = "arrau_v2_1/ARRAU2.1/"
 
 CORPORA = [
     {
@@ -33,7 +31,6 @@ CORPORA = [
     },
     {
         "dir": "Trains_93",
-        "no_raw_files": True,
     },
 ]
 
@@ -41,119 +38,73 @@ CORPORA = [
 def get_document_names(data_dir):
     return [f.replace(".header", "") for f in os.listdir(data_dir) if ".header" in f]
 
+
 def word_id_to_index(word_id):
     return int(word_id.split("_")[1]) - 1
 
-def span_to_ids(span):
-  """Split span string into start and end ids"""
-  if ".." in span:
-    return span.split("..")
-  return [span, span] # same start and end
+
+def read_xml_mmax_file(fname):
+    """Read an XML file in MMAX format."""
+    return [m for m in ET.parse(fname).getroot().iter() if "id" in m.attrib]
 
 
-def xml_words(data_dir, document_name):
-    """Parse a list of words from xml file: [word, ...]"""
-    fname = os.path.join(data_dir, "Basedata", document_name + "_words.xml")
-
-    words = []
-    for word in ET.parse(fname).getroot().iter():
-        if not "id" in word.attrib:
-            continue
-        assert word_id_to_index(word.attrib["id"]) == len(words), "Words ids should be continuous"
-        words.append(word.text)
-    return words
+def read_words_file(fname):
+    markables = read_xml_mmax_file(fname)
+    assert all([word_id_to_index(m.attrib["id"]) == i for i, m in enumerate(markables)]), \
+           "Words ids should be continuous"
+    return [{"id": m.attrib["id"], "text": m.text} for m in markables]
 
 
-def xml_sentence_spans(data_dir, document_name):
-    """Parse sentence spans from xml file: [(word_start, word_end), ...]"""
-    fname = os.path.join(data_dir, "markables", document_name + "_sentence_level.xml")
-
-    sentence_spans = []
-    for markable in ET.parse(fname).getroot().iter():
-        if not "id" in markable.attrib:
-            continue
-        assert int(markable.attrib["orderid"]) == len(sentence_spans), "Sentence ids should be continuous"
-        span = markable.attrib["span"]
-        start, end = map(word_id_to_index, span_to_ids(span))
-        sentence_spans.append((start, end))
-    return sentence_spans
+def read_features_file(fname):
+    markables = read_xml_mmax_file(fname)
+    return [m.attrib for m in markables]
 
 
-def xml_lemmas(data_dir, document_name):
-    """Parse a list of lemmas from xml file"""
-    fname = os.path.join(data_dir, "markables", document_name + "_morph_level.xml")
-
-    lemmas = []
-    for markable in ET.parse(fname).getroot().iter():
-        if not "id" in markable.attrib:
-            continue
-        assert word_id_to_index(markable.attrib["span"]) == len(lemmas), "Words ids should be continuous"
-        lemmas.append(markable.attrib["lemma"])
-    return lemmas
+def read_raw_file(fname):
+    with open(fname) as f:
+        return f.read()
 
 
-def xml_pos_tags(data_dir, document_name):
-    """Parse a list of pos tags from xml file"""
-    fname = os.path.join(data_dir, "markables", document_name + "_pos_level.xml")
+def read_doc(data_dir, document_name):
+    """Read all data pertaining to a given doc"""
+    doc_dict = {"document_name": document_name}
 
-    pos_tags = []
-    for markable in ET.parse(fname).getroot().iter():
-        if not "id" in markable.attrib:
-            continue
-        assert word_id_to_index(markable.attrib["span"]) == len(pos_tags), "Words ids should be continuous"
-        pos_tags.append(markable.attrib["tag"])
-    return pos_tags
+    words_fname = os.path.join(data_dir, "Basedata", document_name + "_words.xml")
+    doc_dict["words"] = read_words_file(words_fname)
 
+    features_fnames = glob.glob(os.path.join(data_dir, "markables", document_name + "_*_level.xml"))
+    for feature_file_name in features_fnames:
+        feature_name = os.path.basename(feature_file_name)
+        feature_name = feature_name.replace("_level.xml", "").replace(document_name + "_", "")
+        doc_dict[feature_name] = read_features_file(feature_file_name)
 
-def xml_coref(data_dir, document_name):
-    """Parse coref data from an xml file"""
-    fname = os.path.join(data_dir, "markables", document_name + "_coref_level.xml")
-
-    features = {}
-    for markable in ET.parse(fname).getroot().iter():
-        if not "id" in markable.attrib:
-            continue
-
-        markable_features = {
-            "sentenceid": int(markable.attrib["sentenceid"]),
-            "span": map(word_id_to_index, span_to_ids(markable.attrib["span"])), # [start, end] word indices
-            "min_span": map(word_id_to_index, span_to_ids(markable.attrib["min_ids"])), # [start, end] word indices
-            "raw_features": markable.attrib,
-        }
-        features[markable.attrib["id"]] = markable_features
-    return features
+    return doc_dict
 
 
+def read_mmax_data(corpus_name, split=None):
+    """Read all mmax data for a given corpus and split"""
+    if split:
+        data_dir = os.path.join(DATASETS_DIR, corpus_name, split, "MMAX")
+    else: 
+        data_dir = os.path.join(DATASETS_DIR, corpus_name, "MMAX")
+    doc_names = get_document_names(data_dir)
+    docs = [read_doc(data_dir, document_name) for document_name in doc_names]
+    for doc in docs:
+        doc["corpus"] = corpus_name
+        doc["split"] = split
+    return docs
 
 
+# Upload to HuggingFace
 
-
-
-
+all_docs = []
 for corpus in CORPORA:
-    words = pass
-    pos_tags = pass
-    lemmas = pass
+    corpus_name = corpus["dir"]
+    splits = corpus["splits"] if "splits" in corpus else [None]
 
-    tokens = pass
-
-
-    sentence_boundaries = pass
-
-    sentences = [tokens[start:end] for start, end in sentence_boundaries]
-
-    markable_features = 
-
-    raw_text = pass
-
-    
+    for split in splits:
+        all_docs += read_mmax_data(corpus_name, split)
 
 
-    
-# dataset = DatasetDict({
-#     "train": Dataset.from_list([doc_name_to_doc[x] for x in train_docs]),
-#     "validation": Dataset.from_list([doc_name_to_doc[x] for x in dev_docs]),
-#     "test": Dataset.from_list([doc_name_to_doc[x] for x in test_docs]),
-# })
-
-# dataset.push_to_hub("coref-data/litbank_raw", f"split_{crossval_split}", private=True)
+dataset = Dataset.from_list(all_docs)
+dataset.push_to_hub("coref-data/arrau_raw", private=True)
