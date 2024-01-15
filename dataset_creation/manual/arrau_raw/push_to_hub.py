@@ -79,24 +79,6 @@ def xml_sentence_spans(data_dir, document_name):
     return sentence_spans
 
 
-def xml_phrase_features(data_dir, document_name):
-    """Parse phrase level features"""
-    fname = os.path.join(data_dir, "markables", document_name + "_phrase_level.xml")
-
-    phrase_features = {}
-    for markable in ET.parse(fname).getroot().iter():
-        if not "id" in markable.attrib:
-            continue
-
-        features = {
-            "id": markable.attrib["id"],
-            "span": map(word_id_to_index, span_to_ids(markable.attrib["span"])), # [start, end] word indices
-            "raw_features": markable.attrib,
-        }
-        phrase_features[markable.attrib["id"]] = features
-    return phrase_features
-
-
 def xml_lemmas(data_dir, document_name):
     """Parse a list of lemmas from xml file"""
     fname = os.path.join(data_dir, "markables", document_name + "_morph_level.xml")
@@ -121,75 +103,6 @@ def xml_pos_tags(data_dir, document_name):
         assert word_id_to_index(markable.attrib["span"]) == len(pos_tags), "Words ids should be continuous"
         pos_tags.append(markable.attrib["tag"])
     return pos_tags
-
-
-def xml_mention_features(data_dir, document_name):
-    """Mention features"""
-    fname = os.path.join(data_dir, "markables", document_name + "_markable_level.xml")
-
-    features = {}
-    for markable in ET.parse(fname).getroot().iter():
-        if not "id" in markable.attrib:
-            continue
-
-        markable_features = {
-            "sentenceid": int(markable.attrib["sentenceid"]),
-            "span": map(word_id_to_index, span_to_ids(markable.attrib["span"])), # [start, end] word indices
-            "min_span": map(word_id_to_index, span_to_ids(markable.attrib["min_ids"])), # [start, end] word indices
-            "raw_features": markable.attrib,
-        }
-        features[markable.attrib["id"]] = markable_features
-    return features
-
-
-def xml_enamex_types(data_dir, document_name):
-    """Enamex types"""
-    fname = os.path.join(data_dir, "markables", document_name + "_enamex_level.xml")
-
-    features = {}
-    for markable in ET.parse(fname).getroot().iter():
-        if not "id" in markable.attrib:
-            continue
-
-        markable_features = {
-            "span": map(word_id_to_index, span_to_ids(markable.attrib["span"])), # [start, end] word indices
-            "tag": markable.attrib["tag"]
-        }
-        features[markable.attrib["id"]] = markable_features
-    return features
-
-
-def xml_chunks(data_dir, document_name):
-    """Read all np spans / chunks"""
-    fname = os.path.join(data_dir, "markables", document_name + "_chunk_level.xml")
-
-    features = {}
-    for markable in ET.parse(fname).getroot().iter():
-        if not "id" in markable.attrib:
-            continue
-
-        markable_features = {
-            "span": map(word_id_to_index, span_to_ids(markable.attrib["span"])), # [start, end] word indices
-            "tag": markable.attrib["tag"]
-        }
-        features[markable.attrib["id"]] = markable_features
-    return features
-
-
-def xml_utterances(data_dir, document_name):
-    """Read all utterance spans"""
-    fname = os.path.join(data_dir, "markables", document_name + "_utterance_level.xml")
-
-    features = {}
-    for markable in ET.parse(fname).getroot().iter():
-        if not "id" in markable.attrib:
-            continue
-
-        markable_features = {
-            "span": map(word_id_to_index, span_to_ids(markable.attrib["span"])), # [start, end] word indices
-        }
-        features[markable.attrib["id"]] = markable_features
-    return features
 
 
 def xml_coref(data_dir, document_name):
