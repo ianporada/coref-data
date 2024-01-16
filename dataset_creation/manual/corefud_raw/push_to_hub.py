@@ -109,8 +109,3 @@ for dataset_path in glob.glob(os.path.join(DATA_DIR, "CorefUD_*/")):
 
     print(f"Pushing {dataset_name} to the hub")
     dataset.push_to_hub("coref-data/corefud_raw", dataset_name)
-
-
-# push all subsets to hub
-# for subset, dataset in subset_to_dataset.items():
-#     dataset.push_to_hub("coref-data/corefud_raw", subset)

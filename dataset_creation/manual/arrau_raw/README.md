@@ -15,7 +15,7 @@ Sub-corpora (original split):
 1. RST DTreeBank (train, dev, test)
 1. Trains 91 (no split)
 1. Trains 93 (no split)
-1. VPC (train, test)
+1. VPC (train, test) <- VPC is a subset of RST
 
 ## Citation
 ```
