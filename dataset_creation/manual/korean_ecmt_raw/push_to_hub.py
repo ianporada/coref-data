@@ -9,7 +9,7 @@ import re
 
 from datasets import Dataset, DatasetDict
 
-from conll_coref_transform import conll_transform
+import conll_transform
 
 # data files are available at this URL
 DATA_URL = "https://github.com/machinereading/CR/blob/743f758e2b0c1fad6a06ce600b59ae882ab66c0e/input/"

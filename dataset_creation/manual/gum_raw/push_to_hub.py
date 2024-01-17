@@ -11,7 +11,7 @@ import glob
 import os
 import re
 
-from conll_coref_transform import conll_transform
+import conll_transform
 from datasets import Dataset, DatasetDict
 from stanza.utils.conll import FIELD_TO_IDX, CoNLL
 from udapi.block.read.conllu import Conllu as ConlluReader

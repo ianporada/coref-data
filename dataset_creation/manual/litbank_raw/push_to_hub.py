@@ -6,7 +6,7 @@ import csv
 import glob
 import os
 
-from conll_coref_transform import conll_transform
+import conll_transform
 from datasets import Dataset, DatasetDict
 
 COREF_DIR = "litbank/coref/conll/" # .conll CoNLL-2012 Shared Task format
