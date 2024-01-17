@@ -1,9 +1,5 @@
 """
-Write the raw gum dataset to the HuggingFace Hub.
-
-Uploads universal dependencies, universal coreference, and OntoNotes style coreference chains.
-
-Uses the published splits. Bridging anaphora is not yet fully parsed
+Write the raw mmc dataset to the HuggingFace Hub.
 """
 
 from pathlib import Path
