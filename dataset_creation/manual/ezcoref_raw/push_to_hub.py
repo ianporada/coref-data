@@ -5,9 +5,7 @@ Write the raw ezcoref to huggingface
 import json
 from pathlib import Path
 
-
 from datasets import Dataset
-
 
 data_path = Path("ezCoref/Data/")
 
