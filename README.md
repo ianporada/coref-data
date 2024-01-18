@@ -21,7 +21,7 @@ Some datasets (those in `dataset_creation/automatic`) were created using Hugging
 
 Update README files for all datasets, create automatic datasets that do not exist, and convert all automatic datasets to parquet:
 ```
-python dataset_creation/generate_datasets.py
+python dataset_creation/create_automatic_datasets.py
 python dataset_creation/convert_datasets_to_parquet.py
 ```
 
@@ -31,6 +31,11 @@ For example, to manually create the mmc dataset (assuming the corpus and repos e
 ```
 cd ~/Research/data/push_to_hub/mmc/
 python ~/Research/code/coref-data/dataset_creation/manual/mmc_raw/push_to_hub.py
+```
+
+README.md files for each dataset can be updated by running
+```
+python dataset_creation/update_readme_files.py
 ```
 
 ### Stage 2: Convert raw HuggingFace datasets into unified formats

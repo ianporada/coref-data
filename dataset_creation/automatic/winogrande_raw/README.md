@@ -1,5 +1,54 @@
 ---
 license: cc-by-4.0
+configs:
+- config_name: winogrande_debiased
+  data_files:
+  - split: train
+    path: "winogrande_debiased/train-*.parquet"
+  - split: validation
+    path: "winogrande_debiased/validation-*.parquet"
+  - split: test
+    path: "winogrande_debiased/test-*.parquet"
+- config_name: winogrande_l
+  data_files:
+  - split: train
+    path: "winogrande_l/train-*.parquet"
+  - split: validation
+    path: "winogrande_l/validation-*.parquet"
+  - split: test
+    path: "winogrande_l/test-*.parquet"
+- config_name: winogrande_m
+  data_files:
+  - split: train
+    path: "winogrande_m/train-*.parquet"
+  - split: validation
+    path: "winogrande_m/validation-*.parquet"
+  - split: test
+    path: "winogrande_m/test-*.parquet"
+- config_name: winogrande_s
+  data_files:
+  - split: train
+    path: "winogrande_s/train-*.parquet"
+  - split: validation
+    path: "winogrande_s/validation-*.parquet"
+  - split: test
+    path: "winogrande_s/test-*.parquet"
+- config_name: winogrande_xl
+  data_files:
+  - split: train
+    path: "winogrande_xl/train-*.parquet"
+  - split: validation
+    path: "winogrande_xl/validation-*.parquet"
+  - split: test
+    path: "winogrande_xl/test-*.parquet"
+- config_name: winogrande_xs
+  data_files:
+  - split: train
+    path: "winogrande_xs/train-*.parquet"
+  - split: validation
+    path: "winogrande_xs/validation-*.parquet"
+  - split: test
+    path: "winogrande_xs/test-*.parquet"
 ---
 
 # Wingrande v1.1

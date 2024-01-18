@@ -1,5 +1,22 @@
 ---
 license: unknown
+configs:
+- config_name: wsc.fixed
+  data_files:
+  - split: train
+    path: "wsc.fixed/train-*.parquet"
+  - split: validation
+    path: "wsc.fixed/validation-*.parquet"
+  - split: test
+    path: "wsc.fixed/test-*.parquet"
+- config_name: wsc
+  data_files:
+  - split: train
+    path: "wsc/train-*.parquet"
+  - split: validation
+    path: "wsc/validation-*.parquet"
+  - split: test
+    path: "wsc/test-*.parquet"
 ---
 
 # Winograd Schema Challenge examples included in the SuperGLUE Benchmark

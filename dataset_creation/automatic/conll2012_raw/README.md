@@ -1,5 +1,38 @@
 ---
 license: other
+configs:
+- config_name: english_v4
+  data_files:
+  - split: train
+    path: "english_v4/train-*.parquet"
+  - split: validation
+    path: "english_v4/validation-*.parquet"
+  - split: test
+    path: "english_v4/test-*.parquet"
+- config_name: chinese_v4
+  data_files:
+  - split: train
+    path: "chinese_v4/train-*.parquet"
+  - split: validation
+    path: "chinese_v4/validation-*.parquet"
+  - split: test
+    path: "chinese_v4/test-*.parquet"
+- config_name: arabic_v4
+  data_files:
+  - split: train
+    path: "arabic_v4/train-*.parquet"
+  - split: validation
+    path: "arabic_v4/validation-*.parquet"
+  - split: test
+    path: "arabic_v4/test-*.parquet"
+- config_name: english_v12
+  data_files:
+  - split: train
+    path: "english_v12/train-*.parquet"
+  - split: validation
+    path: "english_v12/validation-*.parquet"
+  - split: test
+    path: "english_v12/test-*.parquet"
 ---
 
 # CoNLL-2012 Shared Task

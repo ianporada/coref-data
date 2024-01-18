@@ -12,9 +12,27 @@ WinoGrande train and development sets recast as coreference resolution as descri
 
 ```python
 {
-    "doc_name": doc_name, # document name
-    "sentences": sentences, # list of sentences, each sentence is a list of conllu lines
-    "coref_chains": coref_chains, # list of clusters, each cluster is a list of mentions of form [sent, start, end] inclusive
+  "id": str, # example id
+  "text": str, # untokenized example text
+  "sentences": [
+    {
+      "id": int, # sentence index
+      "text": str, # untokenized sentence text
+      "speaker": None, # speaker
+      "tokens": [
+        {
+          # keys are conllu columns: id, text, lemma, upos, xpos, feats, head, deprel, deps, misc
+        },
+        ...
+      ]
+    },
+    ...
+  ],
+  "coref_chains": List[List[List[int]]], # list of clusters, each cluster is a list of mentions, each mention is a span represented as [sent, start, end] inclusive
+  "genre": "crowdsourced",
+  "meta_data": {
+      "comment": "syntax_annotations=stanza|tokenizer=stanza|detokenizer=nltk",
+  },
 }
 ```
 

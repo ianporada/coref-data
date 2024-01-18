@@ -1,5 +1,14 @@
 ---
 license: cc-by-4.0
+configs:
+- config_name: wsc273
+  data_files:
+  - split: test
+    path: "wsc273/test-*.parquet"
+- config_name: wsc285
+  data_files:
+  - split: test
+    path: "wsc285/test-*.parquet"
 ---
 
 # The original Winograd Schema Challenge (WSC) as hosted by Ernest Davis
