@@ -1,5 +1,5 @@
 """
-Write the raw phrase detectives 3 dataset to the HuggingFace Hub.
+Write the conll2012 dataset with conllu dependency parses to the HuggingFace Hub.
 """
 
 from pathlib import Path
@@ -25,9 +25,9 @@ def read_conllu_file(fname):
             raise
         match = re.search(DOC_ID_PATTERN, doc_name)
         doc_id = match.group(1)
-        part_name = match.group(2)
+        part_name = int(match.group(2))
         docs.append({
-            "doc_name": f"{doc_id}_part_{part_name}",
+            "doc_name": f"{doc_id}/part_{part_name}",
             "sentences": sentences,
             "coref_chains": coref_chains,
         })
