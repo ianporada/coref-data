@@ -67,7 +67,7 @@ def format_sentence(sent_and_index, config=None):
 
 
 def convert_doc_into_indiscrim(example, config=None):
-    """convert to standard indiscrim format""" # TODO: if english_v4 copy data over
+    """convert to standard indiscrim format"""
     id = example["document_id"][0]
     raw_sentences = example["sentences"][0]
     
@@ -77,8 +77,8 @@ def convert_doc_into_indiscrim(example, config=None):
     sentences = list(sentences)
 
     # compute coref chains
-    cluster_id_to_mentions = collections.default_dict(list)
-    for sent_i, sentence in enumerate(sentences):
+    cluster_id_to_mentions = collections.defaultdict(list)
+    for sent_i, sentence in enumerate(raw_sentences):
         for coref_span in sentence["coref_spans"]:
             cluster_id, start_index, end_index = coref_span
             cluster_id_to_mentions[cluster_id].append([sent_i, start_index, end_index])
@@ -87,7 +87,7 @@ def convert_doc_into_indiscrim(example, config=None):
     genre_code = id[:2]
     genre = GENRE_CODE_TO_GENRE[genre_code]
 
-    return {
+    indiscrim_doc = {
         "id": id,
         "text": detokenize_sentences(sentences),
         "sentences": sentences,
@@ -97,6 +97,9 @@ def convert_doc_into_indiscrim(example, config=None):
             "comment": "detokenizer=nltk",
         },
     }
+
+    # convert to dataset format of key: list[values]
+    return {k: [v] for k, v in indiscrim_doc.items()}
 
 
 def convert_conll2012_config(repo_name, config_name):
@@ -117,10 +120,13 @@ def convert_conll2012_config(repo_name, config_name):
         batch_size=1,
     )
 
+    dataset.push_to_hub("coref-data/conll2012_indiscrim", config_name)
+
 
 def convert_conll2012():
     # convert each config
     repo_name = "coref-data/conll2012_raw"
+
     configs = datasets.get_dataset_config_names(repo_name)
     for config_name in configs:
         convert_conll2012_config(repo_name, config_name)
