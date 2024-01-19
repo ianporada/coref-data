@@ -1,5 +1,46 @@
 ---
 license: apache-2.0
+configs:
+- config_name: mmc_en
+  data_files:
+  - split: train
+    path: mmc_en/train-*
+  - split: dev
+    path: mmc_en/dev-*
+  - split: test
+    path: mmc_en/test-*
+- config_name: mmc_fa
+  data_files:
+  - split: train
+    path: mmc_fa/train-*
+  - split: dev
+    path: mmc_fa/dev-*
+  - split: test
+    path: mmc_fa/test-*
+- config_name: mmc_fa_corrected
+  data_files:
+  - split: train
+    path: mmc_fa_corrected/train-*
+  - split: dev
+    path: mmc_fa_corrected/dev-*
+  - split: test
+    path: mmc_fa_corrected/test-*
+- config_name: mmc_zh_corrected
+  data_files:
+  - split: train
+    path: mmc_zh_corrected/train-*
+  - split: dev
+    path: mmc_zh_corrected/dev-*
+  - split: test
+    path: mmc_zh_corrected/test-*
+- config_name: mmc_zh_uncorrected
+  data_files:
+  - split: train
+    path: mmc_zh_uncorrected/train-*
+  - split: dev
+    path: mmc_zh_uncorrected/dev-*
+  - split: test
+    path: mmc_zh_uncorrected/test-*
 ---
 
 # MMC (Multilingual Multiparty Coreference)

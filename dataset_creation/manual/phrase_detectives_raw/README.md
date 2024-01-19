@@ -1,5 +1,30 @@
 ---
 license: other
+configs:
+- config_name: conll
+  data_files:
+  - split: train
+    path: conll/train-*
+  - split: dev
+    path: conll/dev-*
+  - split: test
+    path: conll/test-*
+- config_name: conll_singletons
+  data_files:
+  - split: train
+    path: conll_singletons/train-*
+  - split: dev
+    path: conll_singletons/dev-*
+  - split: test
+    path: conll_singletons/test-*
+- config_name: masxml
+  data_files:
+  - split: train
+    path: masxml/train-*
+  - split: dev
+    path: masxml/dev-*
+  - split: test
+    path: masxml/test-*
 ---
 
 # Phrase Detectives Version 3

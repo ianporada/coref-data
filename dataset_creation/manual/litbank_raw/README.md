@@ -1,5 +1,86 @@
 ---
 license: cc-by-4.0
+configs:
+- config_name: split_0
+  data_files:
+  - split: train
+    path: split_0/train-*
+  - split: dev
+    path: split_0/dev-*
+  - split: test
+    path: split_0/test-*
+- config_name: split_1
+  data_files:
+  - split: train
+    path: split_1/train-*
+  - split: dev
+    path: split_1/dev-*
+  - split: test
+    path: split_1/test-*
+- config_name: split_2
+  data_files:
+  - split: train
+    path: split_2/train-*
+  - split: dev
+    path: split_2/dev-*
+  - split: test
+    path: split_2/test-*
+- config_name: split_3
+  data_files:
+  - split: train
+    path: split_3/train-*
+  - split: dev
+    path: split_3/dev-*
+  - split: test
+    path: split_3/test-*
+- config_name: split_4
+  data_files:
+  - split: train
+    path: split_4/train-*
+  - split: dev
+    path: split_4/dev-*
+  - split: test
+    path: split_4/test-*
+- config_name: split_5
+  data_files:
+  - split: train
+    path: split_5/train-*
+  - split: dev
+    path: split_5/dev-*
+  - split: test
+    path: split_5/test-*
+- config_name: split_6
+  data_files:
+  - split: train
+    path: split_6/train-*
+  - split: dev
+    path: split_6/dev-*
+  - split: test
+    path: split_6/test-*
+- config_name: split_7
+  data_files:
+  - split: train
+    path: split_7/train-*
+  - split: dev
+    path: split_7/dev-*
+  - split: test
+    path: split_7/test-*
+- config_name: split_8
+  data_files:
+  - split: train
+    path: split_8/train-*
+  - split: dev
+    path: split_8/dev-*
+  - split: test
+    path: split_8/test-*
+- config_name: split_9
+  data_files:
+  - split: train
+    path: split_9/train-*
+  - split: dev
+    path: split_9/dev-*
+  - split: test
+    path: split_9/test-*
 ---
 
 # LitBank

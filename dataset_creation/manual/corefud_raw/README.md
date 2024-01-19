@@ -1,5 +1,108 @@
 ---
 license: other
+configs:
+- config_name: ca_ancora-corefud
+  data_files:
+  - split: train
+    path: ca_ancora-corefud/train-*
+  - split: validation
+    path: ca_ancora-corefud/validation-*
+- config_name: cs_pcedt-corefud
+  data_files:
+  - split: train
+    path: cs_pcedt-corefud/train-*
+  - split: validation
+    path: cs_pcedt-corefud/validation-*
+- config_name: de_parcorfull-corefud
+  data_files:
+  - split: train
+    path: de_parcorfull-corefud/train-*
+  - split: validation
+    path: de_parcorfull-corefud/validation-*
+- config_name: de_potsdamcc-corefud
+  data_files:
+  - split: train
+    path: de_potsdamcc-corefud/train-*
+  - split: validation
+    path: de_potsdamcc-corefud/validation-*
+- config_name: en_gum-corefud
+  data_files:
+  - split: train
+    path: en_gum-corefud/train-*
+  - split: validation
+    path: en_gum-corefud/validation-*
+- config_name: en_parcorfull-corefud
+  data_files:
+  - split: train
+    path: en_parcorfull-corefud/train-*
+  - split: validation
+    path: en_parcorfull-corefud/validation-*
+- config_name: es_ancora-corefud
+  data_files:
+  - split: train
+    path: es_ancora-corefud/train-*
+  - split: validation
+    path: es_ancora-corefud/validation-*
+- config_name: hu_korkor-corefud
+  data_files:
+  - split: train
+    path: hu_korkor-corefud/train-*
+  - split: validation
+    path: hu_korkor-corefud/validation-*
+- config_name: hu_szegedkoref-corefud
+  data_files:
+  - split: train
+    path: hu_szegedkoref-corefud/train-*
+  - split: validation
+    path: hu_szegedkoref-corefud/validation-*
+- config_name: lt_lcc-corefud
+  data_files:
+  - split: train
+    path: lt_lcc-corefud/train-*
+  - split: validation
+    path: lt_lcc-corefud/validation-*
+- config_name: no_bokmaalnarc-corefud
+  data_files:
+  - split: train
+    path: no_bokmaalnarc-corefud/train-*
+  - split: validation
+    path: no_bokmaalnarc-corefud/validation-*
+- config_name: pl_pcc-corefud
+  data_files:
+  - split: train
+    path: pl_pcc-corefud/train-*
+  - split: validation
+    path: pl_pcc-corefud/validation-*
+- config_name: ru_rucor-corefud
+  data_files:
+  - split: train
+    path: ru_rucor-corefud/train-*
+  - split: validation
+    path: ru_rucor-corefud/validation-*
+- config_name: tr_itcc-corefud
+  data_files:
+  - split: train
+    path: tr_itcc-corefud/train-*
+  - split: validation
+    path: tr_itcc-corefud/validation-*
+- config_name: cs_pdt-corefud
+  data_files:
+  - split: train
+    path: cs_pdt-corefud/train-*
+  - split: validation
+    path: cs_pdt-corefud/validation-*
+- config_name: fr_democrat-corefud
+  data_files:
+  - split: train
+    path: fr_democrat-corefud/train-*
+  - split: validation
+    path: fr_democrat-corefud/validation-*
+- config_name: no_nynorsknarc-corefud
+  data_files:
+  - split: train
+    path: no_nynorsknarc-corefud/train-*
+  - split: validation
+    path: no_nynorsknarc-corefud/validation-*
 ---
 
 # CorefUD v1.1
