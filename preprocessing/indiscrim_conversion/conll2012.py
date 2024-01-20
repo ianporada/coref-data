@@ -4,6 +4,8 @@ Convert all conll 2012 configs to indiscrim format
 
 import collections
 from functools import partial
+import re
+
 import datasets
 
 from .utils.detokenize import detokenize, detokenize_sentences
@@ -41,7 +43,11 @@ def split_doc_into_doc_parts(example):
 
 
 def clean_arabic_text(text):
-    """from https://github.com/juntaoy/aracoref/blob/main/preprocess_arabic.py"""
+    """
+    From https://github.com/juntaoy/aracoref/blob/main/preprocess_arabic.py
+    Modified by https://github.com/pitrack/incremental-coref/conversion_scripts/minimize.py
+    """
+    original = text
     # remove tashkeel
     text = text.replace('{', 'ا')
     text = text.replace('}', 'ا')
@@ -57,16 +63,26 @@ def clean_arabic_text(text):
     text = text.replace('الل`ه','الله')
     text = text.replace('ذ`لك', 'ذلك')
     text = text.replace('إل`ه','إله')
+
+    # Additional for subtoken map reasons, rarely return original
+    if len(text) == 0:
+        return original
     return text
+
+
+def normalize_word(word, config_name):
+    if config_name == "arabic_v4":
+        word = clean_arabic_text(word[:word.find("#")])
+    if word == "/." or word == "/?":
+        return word[1:]
+    else:
+        return word
 
 
 def format_sentence(sent_and_index, config=None):
     """format a raw sentence in standardized indiscrim format"""
     index, raw_sentence = sent_and_index
-    tokens = [{"text": w} for w in raw_sentence["words"]]
-
-    if config == "arabic_v4":
-        
+    tokens = [{"text": normalize_word(w, config)} for w in raw_sentence["words"]]
 
     for i, xpos in enumerate(raw_sentence["pos_tags"]):
         if config == "english_v4":
@@ -125,7 +141,52 @@ def convert_doc_into_indiscrim(example, config=None):
     return {k: [v] for k, v in indiscrim_doc.items()}
 
 
-def convert_conll2012_config(repo_name, config_name):
+def add_conllu_columns(sentences, conllu_dict):
+    for sent_i, sent in enumerate(sentences):
+        for tok_i, tok in enumerate(sent["tokens"]):
+            conllu_tok = conllu_dict[sent_i][tok_i]
+            if conllu_tok["xpos"] != tok["xpos"]:
+                print(f"xpos mismatch: {conllu_tok["xpos"]} and {tok["xpos"]}")
+            conllu_tok.pop("text", None)
+            conllu_tok.pop("xpos", None)
+            tok = tok | conllu_tok
+    return sentences
+
+
+def word_line_to_dict(line):
+    # the conllu data only has certain columns filled
+    return {
+        "text": line[1],
+        "upos": line[3],
+        "xpos": line[4],
+        "head": 0 if line[7] == "root" else int(line[6]),
+        "deprel": line[7],
+    }
+
+
+def sentences_to_conll_dict(sentences):
+    return [[word_line_to_dict(word) for word in s] for s in sentences]
+
+
+def add_conllu_parse_info(dataset):
+    conllu_dataset = datasets.load_dataset("coref-data/conll2012_conllu")
+
+    # convert conllu_dataset into dict mapping doc_name to sentences
+    id_to_conll_dict = {}
+    for split in ["train", "validation", "test"]:
+        for ex in conllu_dataset[split].iter(1):
+            id = ex["doc_name"][0]
+            sentences = ex["sentences"][0]
+            id_to_conll_dict[id] = sentences_to_conll_dict(sentences)
+    
+    dataset = dataset.map(lambda ex: {
+        "sentences": add_conllu_columns(ex["sentences"], id_to_conll_dict[ex["id"]])
+    })
+
+    return dataset
+
+
+def convert_conll2012_config(repo_name, config_name, num_proc=8):
     dataset = datasets.load_dataset(repo_name, config_name)
 
     # split each document into the annotated parts
@@ -133,15 +194,22 @@ def convert_conll2012_config(repo_name, config_name):
         split_doc_into_doc_parts,
         batched=True,
         batch_size=1,
+        num_proc=num_proc,
     )
 
     # reformat
-    convert_doc = partial(convert_doc_into_indiscrim, config=config_name)
+    convert_doc_into_indiscrim_partial = partial(convert_doc_into_indiscrim, config=config_name)
     dataset = dataset.map(
-        convert_doc_into_indiscrim,
+        convert_doc_into_indiscrim_partial,
+        # remove_columns=["document_id"], # remove old columns
         batched=True,
         batch_size=1,
+        # num_proc=num_proc,
     )
+
+    # get conllu parse information for english_v4
+    if config_name == "english_v4":
+        dataset = add_conllu_parse_info(dataset)
 
     dataset.push_to_hub("coref-data/conll2012_indiscrim", config_name)
 

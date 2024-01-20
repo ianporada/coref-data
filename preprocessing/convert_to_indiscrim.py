@@ -45,33 +45,35 @@ See [ianporada/coref-data](https://github.com/ianporada/coref-data) for details 
 Please create an issue there or in this repo for any questions.
 """
 
-def update_readme_file(repo_name):
+def update_readme_file(repo_name, old_repo_name=None):
     """append a short description to the repo README"""
     assert api.repo_exists(repo_name, repo_type="dataset"), f"{repo_name} does not exist"
+    readme_fname = f"datasets/{repo_name}/README.md"
 
-    with fs.open(f"datasets/{repo_name}/README.md", "a") as f:
-        f.write(README_TEMPLATE % (repo_name, repo_name))
+    # would be better to use existing yaml parser at `datasets.utils.metadata.MetadataConfigs`
+    old_readme_text = fs.read_text(readme_fname)
+    yaml_meta_data = old_readme_text[:old_readme_text.rindex("---")]
+    new_readme_text = yaml_meta_data + "\n---\n" + README_TEMPLATE % (old_repo_name, old_repo_name)
+
+    with fs.open(f"datasets/{repo_name}/README.md", "w") as f:
+        f.write(new_readme_text)
 
 
-def convert_raw_to_indiscrim():
+def convert_raw_to_indiscrim(overwrite=False):
     """call each conversion function"""
     for repo_name, conversion_function in repo_to_conversion_fn.items():
-        if api.repo_exists(repo_name, repo_type="dataset"):
+        if not overwrite and api.repo_exists(repo_name, repo_type="dataset"):
             continue
         print(f"Converting dataset {repo_name}")
         conversion_function()
 
         new_repo_name = repo_name.replace("_raw", "_indiscrim")
-        update_readme_file(new_repo_name)
-
-
+        update_readme_file(new_repo_name, old_repo_name=repo_name)
 
 
 def main():
     # convert all datasets
-    convert_raw_to_indiscrim()
-
-    update_readme_files()
+    convert_raw_to_indiscrim(True)
 
 
 if __name__ == "__main__":
