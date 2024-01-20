@@ -40,10 +40,33 @@ def split_doc_into_doc_parts(example):
             'sentences': [doc_parts_dict[k] for k in doc_parts_dict]}
 
 
+def clean_arabic_text(text):
+    """from https://github.com/juntaoy/aracoref/blob/main/preprocess_arabic.py"""
+    # remove tashkeel
+    text = text.replace('{', 'ا')
+    text = text.replace('}', 'ا')
+
+    #text = text.replace('-','')
+    p_tashkeel = re.compile(r'[\u0617-\u061A\u064B-\u0652]')
+    text = re.sub(p_tashkeel, "", text)
+
+    #Other typos in the conll files
+    text = text.replace('ه`ذا', 'هذا')
+    text = text.replace('ه`ذه', 'هذه')
+    text = text.replace('ه`ذين', 'هذين')
+    text = text.replace('الل`ه','الله')
+    text = text.replace('ذ`لك', 'ذلك')
+    text = text.replace('إل`ه','إله')
+    return text
+
+
 def format_sentence(sent_and_index, config=None):
     """format a raw sentence in standardized indiscrim format"""
     index, raw_sentence = sent_and_index
     tokens = [{"text": w} for w in raw_sentence["words"]]
+
+    if config == "arabic_v4":
+        
 
     for i, xpos in enumerate(raw_sentence["pos_tags"]):
         if config == "english_v4":
