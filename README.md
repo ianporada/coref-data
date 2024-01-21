@@ -35,7 +35,7 @@ The format is as follows:
   "text": str, # untokenized example text
   "sentences": [
     {
-      "id": int, # sentence index
+      "id": int, # sentence id (starting at 1 unless the first token is a zero/ellipsis)
       "text": str, # untokenized sentence text
       "speaker": None, # speaker
       "tokens": [

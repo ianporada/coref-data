@@ -11,6 +11,27 @@ license: other
 
 An English corpus annotated for coreference and other linguistic phenomenon. See the project repo for full corpora license information. Annotations are licensed under CC-BY-4.0.
 
+### Label explanations
+
+Coreference links are labeled as:
+* 'link:appos' (apposition)
+* 'link:disc' (discourse)
+* 'link:pred' (predication)
+* 'link:coref' (coreference)
+* 'link:ana' (anaphora)
+* 'link:cata' (cataphora)
+* 'link:sgl' (singleton)
+
+Information type is labeled as (taken from https://arxiv.org/pdf/2309.11582):
+* 'infstat:new' (new - first, unmediated mention of an entity)
+* 'infstat:acc:com' (accessile:commonground - entities accessible to speakers in the situation, e.g. pass [the salt]!)
+* 'infstat:acc:aggr' (accessible:aggregate - new entities referring back to multiple entities, i.e. split antecedents as in Kim ... Yun ... [they])
+* 'infstat:acc:inf' (accessible:inferrable - new entity whose existence could be inferred from other mentions, e.g. via bridging anaphora (Roesiger et al.,
+2018; Hou, 2020), as in a house ... [the door])
+* 'infstat:giv:act' (given:active - subsequent mention after a recent previous mention)
+* 'infstat:giv:inact' (given:inactive - subsequent mention of a nonrecently mentioned entity)
+* 'infstat:undefined'
+
 ## Citation
 ```
 @Article{Zeldes2017,
