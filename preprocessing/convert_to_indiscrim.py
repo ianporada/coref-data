@@ -32,6 +32,7 @@ from indiscrim_conversion.conll2012 import convert_conll2012
 from indiscrim_conversion.preco import convert_preco
 from indiscrim_conversion.litbank import convert_litbank
 from indiscrim_conversion.gum import convert_gum
+from indiscrim_conversion.arrau import convert_arrau
 
 api = HfApi()
 fs = HfFileSystem()
@@ -76,8 +77,10 @@ def main():
 
     # convert_raw_to_indiscrim("coref-data/conll2012_raw", convert_conll2012)
     # convert_raw_to_indiscrim("coref-data/preco_raw", convert_preco)
-    # convert_raw_to_indiscrim("coref-data/litbank_raw", convert_litbank, True)
-    convert_raw_to_indiscrim("coref-data/gum_raw", convert_gum, True)
+    # convert_raw_to_indiscrim("coref-data/litbank_raw", convert_litbank)
+    # convert_raw_to_indiscrim("coref-data/gum_raw", convert_gum)
+    convert_raw_to_indiscrim("coref-data/arrau_raw", convert_arrau)
+
 
 
 
