@@ -82,7 +82,7 @@ def normalize_word(word, config_name):
 def format_sentence(sent_and_index, config=None):
     """format a raw sentence in standardized indiscrim format"""
     index, raw_sentence = sent_and_index
-    tokens = [{"text": normalize_word(w, config)} for w in raw_sentence["words"]]
+    tokens = [{"id": i, "text": normalize_word(w, config)} for i, w in enumerate(raw_sentence["words"])]
 
     for i, xpos in enumerate(raw_sentence["pos_tags"]):
         if config == "english_v4":
@@ -180,8 +180,10 @@ def add_conllu_parse_info(dataset):
             id_to_conll_dict[id] = sentences_to_conll_dict(sentences)
     
     dataset = dataset.map(lambda ex: {
-        "sentences": add_conllu_columns(ex["sentences"], id_to_conll_dict[ex["id"]])
-    })
+            "sentences": add_conllu_columns(ex["sentences"], id_to_conll_dict[ex["id"]])
+        },
+        load_from_cache_file=False,
+    )
 
     return dataset
 
@@ -195,15 +197,17 @@ def convert_conll2012_config(repo_name, config_name, num_proc=8):
         batched=True,
         batch_size=1,
         num_proc=num_proc,
+        load_from_cache_file=False,
     )
 
     # reformat
     convert_doc_into_indiscrim_partial = partial(convert_doc_into_indiscrim, config=config_name)
     dataset = dataset.map(
         convert_doc_into_indiscrim_partial,
-        # remove_columns=["document_id"], # remove old columns
+        remove_columns=["document_id"], # remove old columns
         batched=True,
         batch_size=1,
+        load_from_cache_file=False,
         # num_proc=num_proc,
     )
 
