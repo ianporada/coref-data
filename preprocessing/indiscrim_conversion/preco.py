@@ -10,10 +10,10 @@ from .utils.detokenize import detokenize, detokenize_sentences
 def format_sentence(sent_and_index):
     """format a raw sentence in standardized indiscrim format"""
     index, raw_sentence = sent_and_index
-    tokens = [{"id": i, "text": w} for i, w in enumerate(raw_sentence)]
+    tokens = [{"id": i + 1, "text": w} for i, w in enumerate(raw_sentence)]
     
     return {
-        "id": index,
+        "id": index + 1,
         "speaker": None,
         "text": detokenize(tokens),
         "tokens": tokens,

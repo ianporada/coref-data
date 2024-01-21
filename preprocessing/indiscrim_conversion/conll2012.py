@@ -82,7 +82,7 @@ def normalize_word(word, config_name):
 def format_sentence(sent_and_index, config=None):
     """format a raw sentence in standardized indiscrim format"""
     index, raw_sentence = sent_and_index
-    tokens = [{"id": i, "text": normalize_word(w, config)} for i, w in enumerate(raw_sentence["words"])]
+    tokens = [{"id": i + 1, "text": normalize_word(w, config)} for i, w in enumerate(raw_sentence["words"])]
 
     for i, xpos in enumerate(raw_sentence["pos_tags"]):
         if config == "english_v4":
@@ -96,7 +96,7 @@ def format_sentence(sent_and_index, config=None):
         tokens[i]["xpos"] = xpos_tag
     
     return {
-        "id": index,
+        "id": index + 1,
         "speaker": raw_sentence["speaker"],
         "text": detokenize(tokens),
         "tokens": tokens,
@@ -149,7 +149,8 @@ def add_conllu_columns(sentences, conllu_dict):
                 print(f"xpos mismatch: {conllu_tok["xpos"]} and {tok["xpos"]}")
             conllu_tok.pop("text", None)
             conllu_tok.pop("xpos", None)
-            tok = tok | conllu_tok
+            merged_tok = tok | conllu_tok
+            sent["tokens"][tok_i] = merged_tok
     return sentences
 
 

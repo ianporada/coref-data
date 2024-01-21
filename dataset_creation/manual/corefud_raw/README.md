@@ -153,3 +153,40 @@ https://creativecommons.org/licenses/by/4.0/legalcode
  copyright = {Licence {CorefUD} v1.1},
  year = {2023} }
 ```
+
+## Features
+```python
+{'coref_entities': [[{'eid': Value(dtype='string', id=None),
+                      'eid_or_grp': Value(dtype='string', id=None),
+                      'etype': Value(dtype='string', id=None),
+                      'other': Value(dtype='string', id=None),
+                      'sent_id': Value(dtype='string', id=None),
+                      'span': Value(dtype='string', id=None)}]],
+ 'doc_id': Value(dtype='string', id=None),
+ 'sentences': [{'comment': Value(dtype='string', id=None),
+                'global_entity': Value(dtype='string', id=None),
+                'newdoc': Value(dtype='string', id=None),
+                'newpar': Value(dtype='null', id=None),
+                'sent_id': Value(dtype='string', id=None),
+                'speaker': Value(dtype='null', id=None),
+                'text': Value(dtype='string', id=None),
+                'tokens': [{'coref_mentions': [{'eid': Value(dtype='string',
+                                                             id=None),
+                                                'eid_or_grp': Value(dtype='string',
+                                                                    id=None),
+                                                'etype': Value(dtype='string',
+                                                               id=None),
+                                                'other': Value(dtype='string',
+                                                               id=None),
+                                                'span': Value(dtype='string',
+                                                              id=None)}],
+                            'deprel': Value(dtype='string', id=None),
+                            'feats': Value(dtype='string', id=None),
+                            'form': Value(dtype='string', id=None),
+                            'head': Value(dtype='int64', id=None),
+                            'lemma': Value(dtype='string', id=None),
+                            'misc': Value(dtype='string', id=None),
+                            'ord': Value(dtype='float64', id=None),
+                            'upos': Value(dtype='string', id=None),
+                            'xpos': Value(dtype='string', id=None)}]}]}
+```
