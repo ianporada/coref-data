@@ -65,15 +65,23 @@ def read_docs(conllu_fname):
                 'feats': str(node.feats),
                 'head': node.parent.ord if node.parent else None,
                 'deprel': node.deprel,
+                'misc': str(node.misc),
                 'coref_mentions': coref_mentions,
             }
             sentences[-1]['tokens'].append(token)
 
         coref_entities = [
-            [{
-                "sent_id": mention.head.root.sent_id,
-                "span": mention.span,
-            } for mention in entity.mentions]
+            [
+                {
+                        "sent_id": mention.head.root.sent_id,
+                        'span': mention.span,
+                        'other': str(mention.other),
+                        'eid': mention.entity.eid,
+                        'eid_or_grp': mention.entity.eid_or_grp,
+                        'etype': mention.entity.etype,
+                } 
+                for mention in entity.mentions
+            ]
             for entity in raw_doc.coref_entities 
         ]
 

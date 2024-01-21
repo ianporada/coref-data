@@ -7,24 +7,18 @@ configs:
     path: conll/train-*
   - split: validation
     path: conll/validation-*
-  - split: test
-    path: conll/test-*
 - config_name: conll_singletons
   data_files:
   - split: train
     path: conll_singletons/train-*
   - split: validation
     path: conll_singletons/validation-*
-  - split: test
-    path: conll_singletons/test-*
 - config_name: masxml
   data_files:
   - split: train
     path: masxml/train-*
   - split: validation
     path: masxml/validation-*
-  - split: test
-    path: masxml/test-*
 ---
 
 # Phrase Detectives Version 3

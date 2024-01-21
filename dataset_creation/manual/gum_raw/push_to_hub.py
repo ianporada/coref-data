@@ -187,6 +187,7 @@ def read_corefud_data(conllu_fname):
             'feats': str(node.feats),
             'head': node.parent.ord if node.parent else None,
             'deprel': node.deprel,
+            'misc': str(node.misc),
             'coref_mentions': coref_mentions,
         }
         sentences[-1]['tokens'].append(token)
@@ -197,7 +198,11 @@ def read_corefud_data(conllu_fname):
         for mention in entity.mentions:
             coref_mentions.append({
                 "sent_id": mention.head.root.sent_id,
-                "span": mention.span,
+                'span': mention.span,
+                'other': str(mention.other),
+                'eid': mention.entity.eid,
+                'eid_or_grp': mention.entity.eid_or_grp,
+                'etype': mention.entity.etype,
             })
         coref_entities.append(coref_mentions)
 

@@ -1,5 +1,5 @@
 """
-Convert all conll 2012 configs to indiscrim format
+Convert litbank to indiscrim format
 """
 
 import datasets
