@@ -188,8 +188,8 @@ def convert_arrau():
         genre_num_docs = len(not_split_genre["id"])
         print(f"Len of genre {genre}:", genre_num_docs)
 
-        train_testvalid = not_split_genre.train_test_split(test_size=0.2 if genre_num_docs >= 10 else 2)
-        test_valid = train_testvalid["test"].train_test_split(test_size=0.5)
+        train_testvalid = not_split_genre.train_test_split(test_size=0.2 if genre_num_docs >= 10 else 2, seed=0)
+        test_valid = train_testvalid["test"].train_test_split(test_size=0.5, seed=0)
 
         training_sets.append(train_testvalid["train"])
         validation_sets.append(test_valid["train"])
@@ -200,5 +200,7 @@ def convert_arrau():
         "validation": datasets.concatenate_datasets(validation_sets),
         "test": datasets.concatenate_datasets(test_sets),
     })
+
+    dataset.remove_columns("split")
     
     dataset.push_to_hub("coref-data/arrau_indiscrim")
