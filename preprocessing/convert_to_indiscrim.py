@@ -36,6 +36,7 @@ from indiscrim_conversion.corefud import convert_corefud
 from indiscrim_conversion.arrau import convert_arrau
 from indiscrim_conversion.phrase_detectives import convert_phrase_detectives
 from indiscrim_conversion.korean_ecmt import convert_korean_ecmt
+from indiscrim_conversion.mmc import convert_mmc
 
 api = HfApi()
 fs = HfFileSystem()
@@ -85,7 +86,8 @@ def main():
     # convert_raw_to_indiscrim("coref-data/corefud_raw", convert_corefud)
     # convert_raw_to_indiscrim("coref-data/arrau_raw", convert_arrau)
     # convert_raw_to_indiscrim("coref-data/phrase_detectives_raw", convert_phrase_detectives)
-    convert_raw_to_indiscrim("coref-data/korean_ecmt_raw", convert_korean_ecmt, True)
+    # convert_raw_to_indiscrim("coref-data/korean_ecmt_raw", convert_korean_ecmt)
+    convert_raw_to_indiscrim("coref-data/mmc_raw", convert_mmc, True)
 
 
 
