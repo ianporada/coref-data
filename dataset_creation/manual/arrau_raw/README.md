@@ -17,6 +17,35 @@ Sub-corpora (original split):
 1. Trains 93 (no split)
 1. VPC (train, test) <- VPC is a subset of RST
 
+### Classes
+
+#### Coref
+
+* ambiguity \in {None, 'ambiguous_antecedent', 'ambiguous', 'unambiguous'}
+* gender \in {'unspecified', 'neut', 'female', 'male', 'neuter', 'fem', 'masc', 'unmarked', 'undersp-gen'}
+* non_ref_type \in {None, 'coordination', 'expletive', 'quantifier', 'incomplete', 'unknown', 'predicate', 'idiom'}
+* non_ref_type_2 \in {None, 'unknown', 'expletive'}
+* number \in {'sing', 'mass', 'plur', 'unmarked', 'undersp-num', 'unsure-num'}
+* person \in {'per2', 'per3', 'per1'}
+* ref_type \in {None, 'phrase', 'segment'}
+* ref_type_2 \in {None, 'non_referring', 'new', 'segment', 'phrase'}
+* reference \in {'old', 'non_referring', 'new', 'undef_reference', 'unmarked'}
+* generic_2 \in {None, 'generic-yes', 'generic-no', 'undersp-replicable'}
+
+if reg_type == segment, segment_antecedent indicates discourse deixis phrase unit, but the phrase unit is not a mention
+
+related_phrase:mention_id and related_rel mark bridging anaphora
+
+#### Markable
+* isprenominal \in {'true', 'false'}
+* label \in {'person', 'organization', 'np', 'location'}
+
+#### Statistics
+Total markables: 99582 \
+Split and no min: 1057 \
+Crossing sentence boundary: 355 \
+No entity set: 5
+
 ## Citation
 ```
 @article{uryupina_artstein_bristot_cavicchio_delogu_rodriguez_poesio_2020,
