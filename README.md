@@ -36,11 +36,12 @@ The format is as follows:
   "sentences": [
     {
       "id": int, # sentence id (starting at 1 unless the first token is a zero/ellipsis)
-      "text": str, # untokenized sentence text
+      "text": str, # untokenized sentence text, may also have attributes start_char and end_char
       "speaker": None, # speaker
       "tokens": [
         {
           # keys are conllu columns: id, text, lemma, upos, xpos, feats, head, deprel, deps, misc
+          # start_char and end_char may also be included
         },
         ...
       ]
