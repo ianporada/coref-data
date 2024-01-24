@@ -78,7 +78,8 @@ class WinogradWSC(datasets.GeneratorBasedBuilder):
                     "quote": datasets.Value("string"),
                     "quote_loc": datasets.Value("int32"),
                     "options": datasets.Sequence(datasets.Value("string")),
-                    "label": datasets.ClassLabel(num_classes=2),
+                    "label": datasets.Value("int32"),
+                    "humanSubjects": datasets.Value("string"),
                     "source": datasets.Value("string"),
                 }
             ),
@@ -120,10 +121,11 @@ class WinogradWSC(datasets.GeneratorBasedBuilder):
             ]
 
             answer_txt = self._cleanup_whitespace(schema.findtext("correctAnswer"))
-            features["label"] = int("B" in answer_txt)  # convert "  A. " or " B " strings to a 0/1 index
+            features["label"] = 0 if "A" in answer_txt else (1 if "B" in answer_txt else (2 if "C" in answer_txt else 3))  # convert "  A. " or " B " strings to a 0/1 index
 
             features["pronoun_loc"] = len(text_left) + 1 if len(text_left) > 0 else 0
             features["quote_loc"] = features["pronoun_loc"] - (len(quote_left) + 1 if len(quote_left) > 0 else 0)
+            features["humanSubjects"] = self._cleanup_whitespace(schema.findtext("humanSubjects"))
             features["source"] = self._cleanup_whitespace(schema.findtext("source"))
 
             yield id, features

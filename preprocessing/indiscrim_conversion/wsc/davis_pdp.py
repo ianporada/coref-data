@@ -36,7 +36,7 @@ def find_pronoun(sentences, pronoun, pronoun_loc):
         for tok_i, tok in enumerate(sent["tokens"]):
             if tok["start_char"] == pronoun_loc:
                 assert tok["text"] == pronoun
-                return (sent_i, tok_i, tok_i)
+                return [sent_i, tok_i, tok_i]
     raise ValueError("Cannot find pronoun")
 
 
@@ -44,14 +44,16 @@ def find_start_end(sentences, start_char, end_char):
     # find mention corresponding to start and end char
     start_token = None
     for sent_i, sent in enumerate(sentences):
+        if end_char <= sent["start_char"] or start_char >= sent["end_char"]:
+            continue # skip sentences outside of the range
         for tok_i, tok in enumerate(sent["tokens"]):
             if tok["start_char"] == start_char:
-                start_token = (sent_i, tok_i)
+                start_token = {"sent_i": sent_i, "tok_i": tok_i}
             if start_token and tok["end_char"]:
                 # if end or greater than end and posessive
                 if tok["end_char"] == end_char or (tok["end_char"] > end_char and tok["text"] in ["'s"]):
-                    assert sent_i == start_token[0]
-                    return (sent_i, start_token[0], tok_i)
+                    assert sent_i == start_token["sent_i"]
+                    return [sent_i, start_token["tok_i"], tok_i]
     raise ValueError(f"Cannot find option at ({start_char}, {end_char}) within {sentences}")
 
 
@@ -107,6 +109,7 @@ def convert_to_indiscrim(example):
     pronoun_mention = find_pronoun(sentences, pronoun, pronoun_loc)
     # turn each mention into a cluster
     coref_chains = list(map(lambda x: find_option(sentences, text, x), options))
+    assert len(coref_chains) == len(options), f"Invalid number of options: {options} {coref_chains}"
     # add the pronoun to the correct cluster
     coref_chains[label].append(pronoun_mention)
 

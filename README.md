@@ -48,7 +48,7 @@ The format is as follows:
     },
     ...
   ],
-  "coref_chains": List[List[List[int]]], # list of clusters, each cluster is a list of mentions, each mention is a span represented as [sent, start, end] inclusive
+  "coref_chains": List[List[List[int]]], # list of clusters, each cluster is a list of mentions, each mention is a span represented as [sent, local_start, local_end] inclusive indices
   "genre": str, # a string describing the genre of text
   "meta_data": {
       "comment": str, # meta details about the dataset instance
