@@ -89,7 +89,7 @@ def main():
     # convert_raw_to_indiscrim("coref-data/phrase_detectives_raw", convert_phrase_detectives)
     # convert_raw_to_indiscrim("coref-data/korean_ecmt_raw", convert_korean_ecmt)
     # convert_raw_to_indiscrim("coref-data/mmc_raw", convert_mmc)
-    convert_raw_to_indiscrim("coref-data/davids_pdp_raw", convert_davis_pdp, True)
+    # convert_raw_to_indiscrim("coref-data/davis_pdp_raw", convert_davis_pdp)
 
 
 

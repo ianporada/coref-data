@@ -34,26 +34,34 @@ def hash_example(ex):
 def find_pronoun(sentences, pronoun, pronoun_loc):
     for sent_i, sent in enumerate(sentences):
         for tok_i, tok in enumerate(sent["tokens"]):
-            print(tok)
             if tok["start_char"] == pronoun_loc:
                 assert tok["text"] == pronoun
                 return (sent_i, tok_i, tok_i)
     raise ValueError("Cannot find pronoun")
 
 
-def find_option(sentences, text, option):
-    option_start = text.index(option)
-    option_end = option_start + len(option)
-
+def find_start_end(sentences, start_char, end_char):
+    # find mention corresponding to start and end char
     start_token = None
     for sent_i, sent in enumerate(sentences):
         for tok_i, tok in enumerate(sent["tokens"]):
-            if tok["start_char"] == option_start:
+            if tok["start_char"] == start_char:
                 start_token = (sent_i, tok_i)
-            if start_token and tok["end_char"] == option_end:
-                assert sent_i == start_token[0]
-                return (sent_i, start_token[0], tok_i)
-    raise ValueError("Cannot find option")
+            if start_token and tok["end_char"]:
+                # if end or greater than end and posessive
+                if tok["end_char"] == end_char or (tok["end_char"] > end_char and tok["text"] in ["'s"]):
+                    assert sent_i == start_token[0]
+                    return (sent_i, start_token[0], tok_i)
+    raise ValueError(f"Cannot find option at ({start_char}, {end_char}) within {sentences}")
+
+
+def find_option(sentences, text, option):
+    mentions = []
+    option_starts = [m.start() for m in re.finditer(option, text)]
+    for option_start in option_starts:
+        option_end = option_start + len(option)
+        mentions.append(find_start_end(sentences, option_start, option_end))
+    return mentions
 
 
 def convert_to_indiscrim(example):
@@ -70,7 +78,19 @@ def convert_to_indiscrim(example):
 
     sentences = []
     for sent_i, tokens in enumerate(raw_sentences):
-        non_mtw_tokens = 
+        # add mwt_token start and end to corresponding word
+        mwt_tokens = [t for t in tokens if isinstance(t["id"], tuple)]
+        non_mwt_tokens = [t for t in tokens if not isinstance(t["id"], tuple)]
+        for mwt in mwt_tokens:
+            non_mwt_tokens[mwt["id"][0] - 1]["start_char"] = mwt["start_char"]
+            non_mwt_tokens[mwt["id"][-1] - 1]["end_char"] = mwt["end_char"]
+
+        # set start and end to None if it doesn't exist
+        for tok in non_mwt_tokens:
+            for key in ["start_char", "end_char"]:
+                if not key in tok:
+                    tok[key] = None
+
         start_char = tokens[0]["start_char"]
         end_char = tokens[-1]["end_char"]
         sentences.append({
@@ -79,20 +99,19 @@ def convert_to_indiscrim(example):
             "text": text[start_char:end_char],
             "start_char": start_char,
             "end_char": end_char,
-            "tokens": tokens,
+            "tokens": non_mwt_tokens,
         })
 
     # calculate coreference chains
         
     pronoun_mention = find_pronoun(sentences, pronoun, pronoun_loc)
     # turn each mention into a cluster
-    option_mentions = list(map(lambda x: [find_option(sentences, text, x)], options))
+    coref_chains = list(map(lambda x: find_option(sentences, text, x), options))
     # add the pronoun to the correct cluster
-    option_mentions[label].append(pronoun_mention)
-    coref_chains = option_mentions
+    coref_chains[label].append(pronoun_mention)
 
     return {
-        "id": hash_example(example),
+        "id": hash_example([sentences, coref_chains]),
         "text": text,
         "sentences": sentences,
         "coref_chains": coref_chains,
