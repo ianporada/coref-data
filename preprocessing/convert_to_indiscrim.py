@@ -38,6 +38,8 @@ from indiscrim_conversion.phrase_detectives import convert_phrase_detectives
 from indiscrim_conversion.korean_ecmt import convert_korean_ecmt
 from indiscrim_conversion.mmc import convert_mmc
 from indiscrim_conversion.wsc.davis_pdp import convert_davis_pdp
+from indiscrim_conversion.wsc.davis_wsc import convert_davis_wsc
+from indiscrim_conversion.wsc.dpr import convert_dpr
 
 api = HfApi()
 fs = HfFileSystem()
@@ -67,12 +69,13 @@ def update_readme_file(repo_name, old_repo_name=None):
 
 def convert_raw_to_indiscrim(repo_name, conversion_function, overwrite=False):
     """call each conversion function"""
-    if not overwrite and api.repo_exists(repo_name, repo_type="dataset"):
+    new_repo_name = repo_name.replace("_raw", "_indiscrim")
+    if not overwrite and api.repo_exists(new_repo_name, repo_type="dataset"):
         return
+    
     print(f"Converting dataset {repo_name}")
     conversion_function()
 
-    new_repo_name = repo_name.replace("_raw", "_indiscrim")
     update_readme_file(new_repo_name, old_repo_name=repo_name)
 
 
@@ -89,7 +92,9 @@ def main():
     # convert_raw_to_indiscrim("coref-data/phrase_detectives_raw", convert_phrase_detectives)
     # convert_raw_to_indiscrim("coref-data/korean_ecmt_raw", convert_korean_ecmt)
     # convert_raw_to_indiscrim("coref-data/mmc_raw", convert_mmc)
-    convert_raw_to_indiscrim("coref-data/davis_pdp_raw", convert_davis_pdp, True)
+    # convert_raw_to_indiscrim("coref-data/davis_pdp_raw", convert_davis_pdp)
+    # convert_raw_to_indiscrim("coref-data/davis_wsc_raw", convert_davis_wsc)
+    convert_raw_to_indiscrim("coref-data/dpr_raw", convert_dpr, True)
 
 
 

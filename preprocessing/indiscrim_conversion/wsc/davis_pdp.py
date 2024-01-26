@@ -21,10 +21,8 @@ import json
 import re
 
 import datasets
-import stanza
 
-
-nlp = stanza.Pipeline(lang='en', processors='tokenize,mwt,pos,lemma,depparse')
+from ..utils.parse import parse
 
 
 def hash_example(ex):
@@ -76,7 +74,7 @@ def convert_to_indiscrim(example):
     label = example["label"]
     source = example["source"]
 
-    raw_sentences = nlp(text).to_dict()
+    raw_sentences = parse(text)
 
     sentences = []
     for sent_i, tokens in enumerate(raw_sentences):
