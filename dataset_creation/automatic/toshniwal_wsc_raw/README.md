@@ -2,14 +2,14 @@
 license: cc-by-nd-4.0
 ---
 
-# gen_winograd
+# toshniwal_wsc
 
 - Project: https://github.com/shtoshni/fast-coref
 - Data source: https://github.com/shtoshni/fast-coref/blob/527e3a1c73719ae7443945f12237bcd97b84572f/src/data_processing/process_wsc.py
 
 ## Details
 
-The original WSC manually reformatted with annotated mentions.
+The original 273 examples of the Winograd Schema Challenge manually reformatted with annotated mentions as described in the paper "On Generalization in Coreference Resolution".
 
 ## Citation
 ```
