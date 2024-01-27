@@ -2,25 +2,16 @@
 Convert knowref 60k
 """
 
-import hashlib
-import json
-import re
 
 import datasets
 
 from ..utils.detokenize import detokenize
-
-
-def hash_example(ex):
-    return hashlib.md5(json.dumps(ex, sort_keys=True).encode("utf-8")).hexdigest()
+from ..utils.hash import hash_example
 
 
 def option_to_mention(words, option):
-    try:
-        index = words.index(option)
-    except:
-        print(words)
-        raise
+    """given a single word option, find the corresponding mention of form [sent, start, end] inclusive"""
+    index = words.index(option)
     return [0, index, index]
 
 

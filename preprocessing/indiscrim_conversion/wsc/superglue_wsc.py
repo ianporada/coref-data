@@ -2,10 +2,6 @@
 Convert superglue wsc to indiscrim format
 """
 
-import hashlib
-import json
-import re
-
 import datasets
 
 from ..utils.parse import parse, parse_no_ssplit

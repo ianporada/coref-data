@@ -3,17 +3,12 @@ Convert davis_wsc to indiscrim format
 ```
 """
 
-import hashlib
-import json
 import re
 
 import datasets
 
+from ..utils.hash import hash_example
 from ..utils.parse import parse
-
-
-def hash_example(ex):
-    return hashlib.md5(json.dumps(ex, sort_keys=True).encode("utf-8")).hexdigest()
 
 
 def find_pronoun(sentences, pronoun, pronoun_loc):
