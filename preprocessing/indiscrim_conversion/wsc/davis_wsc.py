@@ -51,7 +51,7 @@ def find_all_option_starts(option, text):
     return starts
 
 
-def get_fixed_option_starts(sentences, text, option)
+def get_fixed_option_starts(sentences, text, option):
     new_option = option
     option_starts = find_all_option_starts(new_option, text)
 

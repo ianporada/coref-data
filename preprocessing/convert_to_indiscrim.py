@@ -40,6 +40,8 @@ from indiscrim_conversion.mmc import convert_mmc
 from indiscrim_conversion.wsc.davis_pdp import convert_davis_pdp
 from indiscrim_conversion.wsc.davis_wsc import convert_davis_wsc
 from indiscrim_conversion.wsc.dpr import convert_dpr
+from indiscrim_conversion.wsc.knowref_60k import convert_knowref_60k
+from indiscrim_conversion.wsc.superglue_wsc import convert_superglue_wsc
 
 api = HfApi()
 fs = HfFileSystem()
@@ -94,7 +96,9 @@ def main():
     # convert_raw_to_indiscrim("coref-data/mmc_raw", convert_mmc)
     # convert_raw_to_indiscrim("coref-data/davis_pdp_raw", convert_davis_pdp)
     # convert_raw_to_indiscrim("coref-data/davis_wsc_raw", convert_davis_wsc)
-    convert_raw_to_indiscrim("coref-data/dpr_raw", convert_dpr, True)
+    # convert_raw_to_indiscrim("coref-data/dpr_raw", convert_dpr)
+    # convert_raw_to_indiscrim("coref-data/knowref_60k_raw", convert_knowref_60k)
+    convert_raw_to_indiscrim("coref-data/superglue_wsc_raw", convert_superglue_wsc, True)
 
 
 
