@@ -1,19 +1,5 @@
 """
-Convert pdp to indiscrim format
-
-We could parse in batches as follows:
-```
-docs = [Document([], text=ex["text"]) for ex in examples]
-
-parses = []
-for i in tqdm(range(0, len(docs), batch_size)):
-    batch_docs = docs[i:i+batch_size]
-    parses += nlp(batch_docs)
-```
-which can also be done with
-```
-nlp.bulk_process(in_docs)
-```
+Convert superglue wsc to indiscrim format
 """
 
 import hashlib
@@ -22,11 +8,7 @@ import re
 
 import datasets
 
-from ..utils.parse import parse_no_ssplit
-
-
-def hash_example(ex):
-    return hashlib.md5(json.dumps(ex, sort_keys=True).encode("utf-8")).hexdigest()
+from ..utils.parse import parse, parse_no_ssplit
 
 
 def find_pronoun(sentences, pronoun):
@@ -38,8 +20,11 @@ def find_pronoun(sentences, pronoun):
     raise ValueError(f"Cannot find pronoun {pronoun} in {sentences}")
 
 
-def find_start_end(sentences, start_char, end_char, option):
+def find_option(sentences, option, option_start):
     # find mention corresponding to start and end char
+    start_char = option_start
+    end_char = option_start + len(option)
+
     start_token = None
     for sent_i, sent in enumerate(sentences):
         if end_char <= sent["start_char"] or start_char >= sent["end_char"]:
@@ -55,31 +40,31 @@ def find_start_end(sentences, start_char, end_char, option):
     raise ValueError(f"Cannot find option '{option}' at ({start_char}, {end_char}) within {sentences}")
 
 
-def find_option(sentences, text, option, pronoun=False):
-    mentions = []
-    option_starts = [m.start() for m in re.finditer(option, text)]
-
-    if len(option_starts) > 1: # first occurrence is to be resolved
-        if not pronoun: 
-            print(f"Option '{option}' appears multiple times in '{text}'")
-        if " " in option:
-            option_starts = option_starts[:1] # take first occurence
-        else:
-            option_starts = [find_pronoun(sentences, option)]
-    
-    for option_start in option_starts:
-        option_end = option_start + len(option)
-        mentions.append(find_start_end(sentences, option_start, option_end, option))
-    return mentions
-
-
 def convert_to_indiscrim(example):
-    text = example["sentence"]
-    pronoun = example["pronoun"]
-    options = example["candidates"]
+    idx = example["idx"]
+    text = example["text"]
+    span1_index = example["span1_index"]
+    span2_index = example["span2_index"]
+    span1_text = example["span1_text"]
+    span2_text = example["span2_text"]
     label = example["label"]
 
-    raw_sentences = parse_no_ssplit(text)
+    # manual fix
+    if idx == 42 and "Some day they might want to use it , but" in text:
+        span2_index = 31 # was previously 30, off by one
+
+    span_index_to_char_index = {0: 0}
+    curr_span_index = 0
+    for i, c in enumerate(text):
+        if c == ' ':
+            curr_span_index += 1
+            span_index_to_char_index[curr_span_index] = i + 1
+
+    raw_sentences = parse(text)
+
+    # manual fix, error in parsing
+    if idx >= 65 and idx <= 67 and "Mrs. Wyman" in text:
+        raw_sentences = parse_no_ssplit(text)
 
     sentences = []
     for sent_i, tokens in enumerate(raw_sentences):
@@ -109,15 +94,15 @@ def convert_to_indiscrim(example):
 
     # calculate coreference chains
         
-    pronoun_mention = find_option(sentences, text, pronoun, pronoun=True)[0]
-    # turn each mention into a cluster
-    coref_chains = list(map(lambda x: find_option(sentences, text, x), options))
-    assert len(coref_chains) == len(options), f"Invalid number of options: {options} {coref_chains}"
-    # add the pronoun to the correct cluster
-    coref_chains[label].append(pronoun_mention)
+    mention_1 = find_option(sentences, span1_text, span_index_to_char_index[span1_index])
+    mention_2 = find_option(sentences, span2_text, span_index_to_char_index[span2_index])
+    if label == 1:
+        coref_chains = [[mention_1, mention_2]] # same cluster
+    else:
+        coref_chains = [[mention_1], [mention_2]] # different clusters
 
     return {
-        "id": hash_example([sentences, coref_chains]),
+        "id": idx,
         "text": text,
         "sentences": sentences,
         "coref_chains": coref_chains,
@@ -128,18 +113,14 @@ def convert_to_indiscrim(example):
     }
 
 
-def convert_dpr():
-    dataset = datasets.load_dataset("coref-data/dpr_raw")
+def convert_superglue_wsc():
+    dataset = datasets.load_dataset("coref-data/superglue_wsc_raw", "wsc.fixed")
 
     # convert
     dataset = dataset.map(
         convert_to_indiscrim,
-        remove_columns=dataset["test"].column_names,
+        remove_columns=dataset["train"].column_names,
         load_from_cache_file=False,
     )
 
-    dataset.push_to_hub("coref-data/dpr_indiscrim")
-
-
-
-convert_superglue_wsc
+    dataset.push_to_hub("coref-data/superglue_wsc_indiscrim")
