@@ -100,6 +100,9 @@ def format_sentence(sent_and_index, config=None):
         "speaker": raw_sentence["speaker"],
         "text": detokenize(tokens),
         "tokens": tokens,
+        "misc": {
+            "parse_tree": raw_sentence["parse_tree"],
+        },
     }
 
 
