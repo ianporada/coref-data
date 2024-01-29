@@ -16,4 +16,4 @@ dataset = datasets.load_dataset("DataProvenanceInitiative/flan2021_submix_origin
 
 dataset = dataset.filter(lambda example: example["task_name"] in COREFERENCE_TASK_NAMES)
 
-dataset.push_to_hub("coref-data/flan2021_coreference_raw", private=True)
+dataset.push_to_hub("coref-data/flan2021_coreference_raw")
