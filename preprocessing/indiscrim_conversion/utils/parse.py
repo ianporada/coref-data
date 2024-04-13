@@ -18,4 +18,3 @@ def parse(text):
 def parse_no_ssplit(text):
     """parse but don't split sentences"""
     return nlp_no_ssplit(text).to_dict()
-    

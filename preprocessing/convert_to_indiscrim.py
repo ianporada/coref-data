@@ -37,6 +37,7 @@ from indiscrim_conversion.arrau import convert_arrau
 from indiscrim_conversion.phrase_detectives import convert_phrase_detectives
 from indiscrim_conversion.korean_ecmt import convert_korean_ecmt
 from indiscrim_conversion.mmc import convert_mmc
+from indiscrim_conversion.gap import convert_gap
 from indiscrim_conversion.wsc.davis_pdp import convert_davis_pdp
 from indiscrim_conversion.wsc.davis_wsc import convert_davis_wsc
 from indiscrim_conversion.wsc.dpr import convert_dpr
@@ -85,7 +86,7 @@ def main():
     # convert all datasets
     # for repo_name, conversion_function in repo_to_conversion_fn.items():
 
-    convert_raw_to_indiscrim("coref-data/conll2012_raw", convert_conll2012, True)
+    # convert_raw_to_indiscrim("coref-data/conll2012_raw", convert_conll2012)
     # convert_raw_to_indiscrim("coref-data/preco_raw", convert_preco)
     # convert_raw_to_indiscrim("coref-data/litbank_raw", convert_litbank)
     # convert_raw_to_indiscrim("coref-data/gum_raw", convert_gum)
@@ -99,6 +100,8 @@ def main():
     # convert_raw_to_indiscrim("coref-data/dpr_raw", convert_dpr)
     # convert_raw_to_indiscrim("coref-data/knowref_60k_raw", convert_knowref_60k)
     # convert_raw_to_indiscrim("coref-data/superglue_wsc_raw", convert_superglue_wsc)
+    convert_raw_to_indiscrim("coref-data/gap_raw", convert_gap, True)
+
 
 
 
