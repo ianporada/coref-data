@@ -55,3 +55,18 @@ The format is as follows:
   },
 }
 ```
+
+#### Reference
+
+This code was originally written for the following project. A significantly updated version will be published at ACL Findings 2024.
+
+```
+@misc{porada2023investigating,
+    title={Investigating Failures to Generalize for Coreference Resolution Models},
+    author={Ian Porada and Alexandra Olteanu and Kaheer Suleman and Adam Trischler and Jackie Chi Kit Cheung},
+    year={2023},
+    eprint={2303.09092},
+    archivePrefix={arXiv},
+    primaryClass={cs.CL}
+}
+```
