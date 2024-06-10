@@ -15,6 +15,7 @@ datasets_to_parse = [
     # just constituency
     ("coref-data/gum_indiscrim", "ontogum"), # 5
     ("coref-data/gum_indiscrim", "original"), # 6
+    ("coref-data/knowref_60k_indiscrim", "default"), # 7
 ]
 
 nlp = stanza.Pipeline(lang='en', processors='tokenize,mwt,pos,lemma,depparse,constituency', tokenize_pretokenized=True)
@@ -38,13 +39,18 @@ def add_parse_to_example(example, only_constituency=False):
     return example
 
 
-def add_parse(dataset_name, dataset_config, val_test_only=False, num_proc=4):
+def add_parse(dataset_name, dataset_config, val_test_only=False, test_only=False, num_proc=4):
     dataset = load_dataset(dataset_name, dataset_config)
     # features = dataset["train"].features
     # features["sentences"][0]['misc'] =  {'parse_tree': Value(dtype='string', id=None)}
     if val_test_only:
         dataset = datasets.DatasetDict({
             "validation": dataset["validation"].map(add_parse_to_example, num_proc=num_proc),
+            "test": dataset["test"].map(add_parse_to_example, num_proc=num_proc),
+        })
+        dataset_name += "_parsed"
+    if test_only:
+        dataset = datasets.DatasetDict({
             "test": dataset["test"].map(add_parse_to_example, num_proc=num_proc),
         })
         dataset_name += "_parsed"
@@ -56,12 +62,13 @@ def add_parse(dataset_name, dataset_config, val_test_only=False, num_proc=4):
 @click.command()
 @click.option('--dataset_index', type=int)
 @click.option("--val_test_only", is_flag=True, default=False)
+@click.option("--test_only", is_flag=True, default=False)
 @click.option('--start', default=-1, type=int)
 @click.option('--end', default=-1, type=int)
-def main(dataset_index, val_test_only, start, end):
+def main(dataset_index, val_test_only, test_only, start, end):
     dataset_name, dataset_config = datasets_to_parse[dataset_index]
     if start < 0:
-        add_parse(dataset_name, dataset_config, val_test_only)
+        add_parse(dataset_name, dataset_config, val_test_only, test_only)
         return
     
     # dataset = load_dataset(dataset_name, dataset_config, split="train")
