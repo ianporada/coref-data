@@ -58,15 +58,22 @@ The format is as follows:
 
 #### Reference
 
-This code was originally written for the following project. A significantly updated version will be published at ACL Findings 2024.
+This code was originally written for the following project. See `analysis/types_of_coreference.py` for how we computed each type of coreference for the error analysis.
 
 ```
-@misc{porada2023investigating,
-    title={Investigating Failures to Generalize for Coreference Resolution Models},
-    author={Ian Porada and Alexandra Olteanu and Kaheer Suleman and Adam Trischler and Jackie Chi Kit Cheung},
-    year={2023},
-    eprint={2303.09092},
-    archivePrefix={arXiv},
-    primaryClass={cs.CL}
+@inproceedings{porada-etal-2024-challenges,
+    title = "Challenges to Evaluating the Generalization of Coreference Resolution Models: A Measurement Modeling Perspective",
+    author = "Porada, Ian  and
+      Olteanu, Alexandra  and
+      Suleman, Kaheer  and
+      Trischler, Adam  and
+      Cheung, Jackie",
+    booktitle = "Findings of the Association for Computational Linguistics ACL 2024",
+    month = aug,
+    year = "2024",
+    address = "Bangkok, Thailand and virtual meeting",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2024.findings-acl.909",
+    pages = "15380--15395",
 }
 ```
